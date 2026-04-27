@@ -6,6 +6,8 @@ Built for the [Purely Personal workshop](https://purely-personal-workshop.vercel
 
 [**→ Try the live form**](https://claude-design-beginners.vercel.app/) · [**↓ Download the zip**](https://claude-design-beginners.vercel.app/brand-in-a-box.zip) · [**Browse examples**](examples/)
 
+[**Code-flavored prompts (PDF)**](https://claude-design-beginners.vercel.app/handout-five-prompts.pdf) · [**Claude Design prompts (PDF)**](https://claude-design-beginners.vercel.app/handout-claude-design.pdf) · [**Workshop flow**](docs/workshop-flow.md)
+
 ![Brand In A Box demo — fill the form, watch your brand appear, generate the prompt](docs/demo.gif)
 
 ---

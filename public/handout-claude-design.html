@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>5 Prompts — Claude Design Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @page { size: A4 portrait; margin: 0; }
+
+    :root {
+      --color-red: #e90d41;
+      --color-near-black: #0a0a0a;
+      --color-silver: #b8bec1;
+      --color-white: #ffffff;
+      --color-off-white: #f7f7f8;
+      --color-gray-100: #e8eaec;
+      --color-gray-500: #6b7075;
+      --font-heading: 'Rethink Sans', 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      color: var(--color-near-black);
+      background: #1a1a1a;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    @media print { body { background: white; } }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 22mm 22mm 26mm;
+      background: var(--color-off-white);
+      position: relative;
+      page-break-after: always;
+      margin: 0 auto 16px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    @media print {
+      .page { box-shadow: none; margin: 0; min-height: auto; }
+    }
+    .page:last-child { page-break-after: avoid; }
+
+    .cover { justify-content: space-between; gap: 24px; min-height: 297mm; height: 297mm; }
+    .cover-top { display: flex; flex-direction: column; gap: 24px; }
+    .eyebrow {
+      display: inline-block; align-self: flex-start;
+      background: var(--color-red); color: var(--color-white);
+      padding: 6px 14px; border-radius: 9999px;
+      font-family: var(--font-mono); font-weight: 500;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .cover-title {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 84px; line-height: 0.95; letter-spacing: -0.035em;
+      color: var(--color-near-black); margin: 0;
+    }
+    .cover-title .accent { color: var(--color-red); }
+    .cover-lede {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: 19px; line-height: 1.55; color: var(--color-gray-500);
+      max-width: 480px; margin: 0;
+    }
+    .cover-toc {
+      display: flex; flex-direction: column; gap: 8px;
+      padding: 20px 0; border-top: 2px solid var(--color-near-black);
+      border-bottom: 1px solid var(--color-silver);
+    }
+    .cover-toc-row {
+      display: flex; gap: 16px;
+      font-family: var(--font-body); font-size: 14px; line-height: 1.5;
+    }
+    .cover-toc-row .num {
+      font-family: var(--font-mono); font-weight: 500;
+      color: var(--color-red); width: 28px; flex-shrink: 0;
+    }
+    .cover-toc-row .name { font-weight: 600; }
+    .cover-toc-row .desc { color: var(--color-gray-500); }
+    .cover-bottom {
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .cover-byline { font-family: var(--font-body); font-size: 13px; line-height: 1.5; }
+    .cover-byline .name { font-weight: 600; }
+    .cover-byline .role { color: var(--color-gray-500); }
+    .cover-event {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--color-gray-500); text-align: right; line-height: 1.6;
+    }
+
+    /* Journey page */
+    .journey { gap: 24px; min-height: 297mm; height: 297mm; justify-content: space-between; }
+    .journey-title {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 56px; line-height: 1.02; letter-spacing: -0.03em;
+      margin: 0 0 8px;
+    }
+    .journey-title .accent { color: var(--color-red); }
+    .journey-lede {
+      font-family: var(--font-body); font-size: 16px;
+      line-height: 1.6; color: var(--color-gray-500);
+      max-width: 540px; margin: 0;
+    }
+    .journey-flow {
+      display: flex; flex-direction: column; gap: 16px;
+      margin-top: 20px;
+    }
+    .step {
+      display: flex; gap: 20px; align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--font-mono); font-weight: 500;
+      font-size: 13px; letter-spacing: 0.12em;
+      color: var(--color-red); width: 36px; flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .step-content { flex: 1; }
+    .step-name {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 18px; line-height: 1.3;
+      letter-spacing: -0.01em; margin: 0 0 4px;
+      color: var(--color-near-black);
+    }
+    .step-desc {
+      font-family: var(--font-body); font-size: 13px;
+      line-height: 1.5; color: var(--color-gray-500); margin: 0;
+    }
+    .step-tool {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--color-near-black); padding: 3px 8px;
+      background: var(--color-white); border: 1px solid var(--color-near-black);
+      border-radius: 9999px;
+      flex-shrink: 0; align-self: flex-start; margin-top: 2px;
+    }
+
+    /* Prompt section */
+    .prompt-header {
+      page-break-after: avoid;
+      page-break-inside: avoid;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .eyebrow-text {
+      font-family: var(--font-mono); font-weight: 500;
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--color-red); margin: 0;
+    }
+    .prompt-title {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 44px; line-height: 1.04; letter-spacing: -0.025em;
+      margin: 0;
+    }
+    .prompt-meta {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      padding: 14px 0;
+      border-top: 1px solid var(--color-silver);
+      border-bottom: 1px solid var(--color-silver);
+    }
+    .prompt-meta-cell .label {
+      font-family: var(--font-mono); font-weight: 500;
+      font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--color-gray-500); margin-bottom: 4px;
+    }
+    .prompt-meta-cell .value {
+      font-family: var(--font-body); font-weight: 500;
+      font-size: 13px; line-height: 1.45; color: var(--color-near-black);
+    }
+    .prompt-block {
+      background: var(--color-near-black); color: var(--color-white);
+      padding: 18px 22px;
+      font-family: var(--font-mono); font-size: 10.5px;
+      line-height: 1.7;
+      white-space: pre-wrap; word-wrap: break-word;
+      border-radius: 4px;
+    }
+    .prompt-block .key { color: #ffd966; }
+    .prompt-block .accent { color: #ff7a9a; }
+    .prompt-block .comment { color: #b8bec1; font-style: italic; }
+    .prompt-block .section-divider { color: #ff7a9a; font-weight: 500; }
+
+    .prompt-after {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 2px solid var(--color-near-black);
+      page-break-inside: avoid;
+    }
+    .prompt-after-label {
+      font-family: var(--font-mono); font-weight: 500;
+      font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--color-red); margin-bottom: 6px;
+    }
+    .prompt-after-text {
+      font-family: var(--font-body); font-size: 13px;
+      line-height: 1.55; color: var(--color-near-black); margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1: COVER -->
+  <div class="page cover">
+    <div class="cover-top">
+      <span class="eyebrow">// CLAUDE DESIGN EDITION</span>
+      <h1 class="cover-title">5 prompts.<br>Your brand. <span class="accent">On canvas.</span></h1>
+      <p class="cover-lede">The Claude Design versions of the workshop prompts. Run them in the chat panel at claude.ai/design after you've uploaded your DESIGN.md as the project's design system.</p>
+    </div>
+
+    <div class="cover-toc">
+      <div class="cover-toc-row"><span class="num">01</span><span><span class="name">The Master Check</span> <span class="desc">— confirm DESIGN.md is loaded, set the rules.</span></span></div>
+      <div class="cover-toc-row"><span class="num">02</span><span><span class="name">Topic to Carousel</span> <span class="desc">— 7 slides rendered on canvas.</span></span></div>
+      <div class="cover-toc-row"><span class="num">03</span><span><span class="name">Winning Ad to My Version</span> <span class="desc">— forensic decode + 3 variations.</span></span></div>
+      <div class="cover-toc-row"><span class="num">04</span><span><span class="name">Pinterest to My Layout</span> <span class="desc">— borrow structure, never colors.</span></span></div>
+      <div class="cover-toc-row"><span class="num">05</span><span><span class="name">Iterate to Refine</span> <span class="desc">— V1 + V2 side by side.</span></span></div>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-byline">
+        <div class="name">Daniel Paul</div>
+        <div class="role">Founder, Purely Personal</div>
+        <div class="role">claude-design-beginners.vercel.app</div>
+      </div>
+      <div class="cover-event">
+        BUILD A BUSINESS<br>
+        THAT RUNS BY ITSELF<br>
+        2026 · 04 · 28
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: THE JOURNEY -->
+  <div class="page journey">
+    <div>
+      <span class="eyebrow">// THE JOURNEY</span>
+      <h2 class="journey-title" style="margin-top: 24px;">From form to <span class="accent">finished design.</span></h2>
+      <p class="journey-lede">These prompts are step 5 of a 7-step journey. The first 4 steps get you a DESIGN.md to upload. The last 2 steps ship your work.</p>
+
+      <div class="journey-flow">
+        <div class="step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <h3 class="step-name">Open the fillable form</h3>
+            <p class="step-desc">claude-design-beginners.vercel.app — answer 10 questions about your brand.</p>
+          </div>
+          <span class="step-tool">Browser</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <h3 class="step-name">Click Generate Claude Prompt</h3>
+            <p class="step-desc">Copy the generated prompt. Click Download brand-in-a-box.zip.</p>
+          </div>
+          <span class="step-tool">Browser</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <h3 class="step-name">Generate your brand folder</h3>
+            <p class="step-desc">Open Claude Code in the unzipped folder. Paste the prompt. ~90 seconds.</p>
+          </div>
+          <span class="step-tool">Claude Code</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">04</span>
+          <div class="step-content">
+            <h3 class="step-name">Upload DESIGN.md to Claude Design</h3>
+            <p class="step-desc">claude.ai/design → New project → Add assets → upload DESIGN.md.</p>
+          </div>
+          <span class="step-tool">Claude Design</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">05</span>
+          <div class="step-content">
+            <h3 class="step-name">Run prompts 01-05 in this handout</h3>
+            <p class="step-desc">Master Check first to lock the rules. Then any of 02-05 as you need.</p>
+          </div>
+          <span class="step-tool">Claude Design</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">06</span>
+          <div class="step-content">
+            <h3 class="step-name">Iterate until you'd ship it</h3>
+            <p class="step-desc">Use prompt 05 (Iterate). Inline comments on canvas also work.</p>
+          </div>
+          <span class="step-tool">Claude Design</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">07</span>
+          <div class="step-content">
+            <h3 class="step-name">Export and ship</h3>
+            <p class="step-desc">Claude Design exports to .zip, PDF, PPTX, HTML, Canva, or Claude Code.</p>
+          </div>
+          <span class="step-tool">Claude Design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMPT 01: MASTER CHECK -->
+  <div class="page">
+    <div class="prompt-header">
+      <p class="eyebrow-text">PROMPT 01 / 05  //  THE MASTER CHECK</p>
+      <h2 class="prompt-title">Confirm. Lock. Begin.</h2>
+      <div class="prompt-meta">
+        <div class="prompt-meta-cell">
+          <div class="label">When to run</div>
+          <div class="value">First message of any Claude Design project, right after uploading DESIGN.md.</div>
+        </div>
+        <div class="prompt-meta-cell">
+          <div class="label">What it does</div>
+          <div class="value">Confirms DESIGN.md is loaded. Locks every artifact to your voice and visual rules until you say otherwise.</div>
+        </div>
+      </div>
+    </div>
+    <pre class="prompt-block"><span class="section-divider">═══ DESIGN SYSTEM CHECK ═══</span>
+
+You should have my DESIGN.md loaded as this project's design system.
+
+Confirm in 4 lines, no preamble:
+- My accent color (hex)
+- My heading font
+- My body font
+- My one-sentence brand description (from DESIGN.md section 9)
+
+If any of these come back blank, generic, or wrong, the DESIGN.md is
+not loaded. Tell me and stop.
+
+<span class="section-divider">═══ STANDING RULES (every artifact in this project) ═══</span>
+
+<span class="accent">Voice contract:</span>
+1. Apply my voice rules from DESIGN.md section 9 to all copy.
+   No em dashes, no banned phrases, no hedging language.
+2. Use real example phrases from my brand description. Never lorem ipsum.
+3. Before you write copy, ask: "Would the founder say this on a sales call?"
+   If no, rewrite.
+
+<span class="accent">Visual contract:</span>
+1. Pull every color, font, spacing, and component style from DESIGN.md.
+   No improvisation.
+2. The accent color appears at most ONCE per visible frame, on a verb,
+   a number, or a CTA. Never on body paragraphs.
+3. Match the family's signature gesture (corner radius, border style,
+   accent ratio).
+
+<span class="accent">Self-critique contract (run BEFORE rendering):</span>
+☐ Scan against DESIGN.md "Don'ts." Did you do anything banned? Fix.
+☐ Read the copy in your head. Does it match my rhythm rules?
+☐ Count accent uses per frame. More than 1 visible at once? Cut.
+☐ Any lorem ipsum, generic stock language, or hedging? Replace.
+
+<span class="section-divider">═══ WHEN I ATTACH AN IMAGE ═══</span>
+
+Do not assume. Ask one question:
+
+"Which mode?
+ (a) Match-energy — borrow tone and density, not visuals
+ (b) Layout-structure — borrow composition, not colors or fonts
+ (c) Pure reference — extract one specific element, ignore the rest
+ (d) Anti-reference — do the opposite of what this image does"
+
+Wait for my answer.
+
+<span class="section-divider">═══ DELIVERY PROTOCOL ═══</span>
+
+When you finish a design on canvas:
+1. Render it.
+2. Reply: "Done. Iterate? <span class="accent">{one specific thing}</span>. Next? <span class="accent">{prompt 02-05}</span>."
+
+No long summaries. The canvas speaks.
+
+<span class="section-divider">═══ NOW ═══</span>
+
+Run the design system check above and give me the 4 lines.</pre>
+    <div class="prompt-after">
+      <div class="prompt-after-label">If this fails</div>
+      <p class="prompt-after-text">If the 4 confirmation lines come back blank or generic, your DESIGN.md isn't loaded. Re-upload it under "Add assets" before continuing. None of the other prompts work without this one passing.</p>
+    </div>
+  </div>
+
+  <!-- PROMPT 02: CAROUSEL -->
+  <div class="page">
+    <div class="prompt-header">
+      <p class="eyebrow-text">PROMPT 02 / 05  //  TOPIC TO CAROUSEL</p>
+      <h2 class="prompt-title">7 slides on canvas.</h2>
+      <div class="prompt-meta">
+        <div class="prompt-meta-cell">
+          <div class="label">When to run</div>
+          <div class="value">Anytime you need a LinkedIn carousel. Replace [INSERT TOPIC].</div>
+        </div>
+        <div class="prompt-meta-cell">
+          <div class="label">What it does</div>
+          <div class="value">Renders 7 slides on canvas, 1080×1350 each, in your brand. Cover, 5 lessons, soft CTA. Self-checked.</div>
+        </div>
+      </div>
+    </div>
+    <pre class="prompt-block"><span class="section-divider">═══ MISSION ═══</span>
+
+Topic: <span class="accent">[INSERT TOPIC]</span>
+Outcome: One LinkedIn carousel that earns me the inbound DM from my ICP.
+
+<span class="section-divider">═══ THINK FIRST ═══</span>
+
+Before generating, in your head:
+1. Who specifically opens this carousel? (recall ICP from DESIGN.md)
+2. What deeper pain does this carousel agitate?
+3. Which hook style fits best? (refer to my voice rules)
+4. ONE big idea per slide. Two ideas means two slides.
+
+<span class="section-divider">═══ STRUCTURE ═══</span>
+
+7 slides on canvas. 1080×1350 each. Stack vertically.
+
+<span class="accent">Slide 1 — COVER</span>
+  Hook in 8-12 words.
+  Eyebrow pill (matches my brand's eyebrow style).
+  Type-driven, big.
+  Accent color on ONE word.
+  Footer module if my brand uses one.
+
+<span class="accent">Slides 2-6 — LESSONS</span>
+  Each slide does ONE job:
+    - Eyebrow "STEP N"
+    - Lesson title in 5-9 words
+    - Body in 2 sentences max
+    - One visual element: card, icon, number, or quote
+  No slide repeats the previous slide's visual move.
+
+<span class="accent">Slide 7 — CTA</span>
+  Soft, sounds like a DM not an ad.
+  "Comment [WORD] and I'll DM you the [asset]."
+  P.S. that asks a question or offers a bonus.
+
+<span class="section-divider">═══ COPY DISCIPLINE ═══</span>
+
+- Match my sentence rhythm within ±2 words.
+- Use 1-2 of my ranked hooks.
+- Include one specific number with timeframe.
+- Banned phrases get auto-rejected.
+
+Forbidden: em dashes, hashtags, emoji, "unlock," "leverage,"
+"transform," "10x," "secret"
+
+<span class="section-divider">═══ OUTPUT ═══</span>
+
+Render all 7 slides on the canvas as a vertical stack.
+Each slide is its own frame at 1080×1350.
+
+<span class="section-divider">═══ SELF-CHECK BEFORE DELIVERY ═══</span>
+
+☐ Banned phrases anywhere?
+☐ Accent color used more than once on any single slide?
+☐ Slide-1 hook and slide-7 CTA in same voice register?
+☐ Sentence rhythm matches my voice rules?
+☐ Slide 1 hook promises what slide 7 delivers?
+☐ Any AI tells — gradient, generic illustration, em dash?
+
+<span class="section-divider">═══ AFTER DELIVERY ═══</span>
+
+Tell me which TWO slides are weakest, offer to remix.
+Suggest the next 3 carousel topics for follow-up.</pre>
+    <div class="prompt-after">
+      <div class="prompt-after-label">Export from Claude Design</div>
+      <p class="prompt-after-text">Once you've shipped, click Export → PDF. Each slide becomes one page. That PDF goes straight to LinkedIn as a document carousel.</p>
+    </div>
+  </div>
+
+  <!-- PROMPT 03: WINNING AD -->
+  <div class="page">
+    <div class="prompt-header">
+      <p class="eyebrow-text">PROMPT 03 / 05  //  WINNING AD TO MY VERSION</p>
+      <h2 class="prompt-title">Reverse-engineer the win.</h2>
+      <div class="prompt-meta">
+        <div class="prompt-meta-cell">
+          <div class="label">When to run</div>
+          <div class="value">When you see an ad performing in your industry and want the same impact in your brand.</div>
+        </div>
+        <div class="prompt-meta-cell">
+          <div class="label">What it does</div>
+          <div class="value">Forensic decode of why the ad works. Then 3 variations on canvas: faithful, confident, risky.</div>
+        </div>
+      </div>
+    </div>
+    <pre class="prompt-block"><span class="section-divider">═══ INPUT ═══</span>
+
+<span class="accent">[ATTACH IMAGE OF THE AD]</span>
+
+Industry context: <span class="accent">[my industry]</span>
+Why I think this works: <span class="accent">[one sentence — your hypothesis]</span>
+
+<span class="section-divider">═══ STEP 1: FORENSIC DECODE ═══</span>
+
+In chat (don't render anything yet), tell me:
+
+<span class="accent">Composition</span>
+  - Where does the eye land first, second, third?
+  - Negative space ratio (% empty)?
+  - What anchor holds the composition?
+
+<span class="accent">Copy</span>
+  - Hook structure?
+  - Headline word count?
+  - CTA: explicit or implicit?
+  - What word does the most work?
+
+<span class="accent">Visual signature</span>
+  - Color hierarchy (dominant, secondary, accent — rough %)
+  - Type contrast (hero/body size ratio)
+  - The ONE move that makes this premium / cheap / trustworthy
+
+<span class="accent">Emotional beat</span>
+  - Feeling left behind?
+  - Objection preempted?
+  - Anti-audience?
+
+<span class="section-divider">═══ STEP 2: BRAND TRANSLATION ═══</span>
+
+Now render my version on canvas. Same skeleton, my brand from DESIGN.md.
+
+Take from original:
+✓ Composition (where eye lands)
+✓ Copy structure
+✓ Emotional beat
+✓ Negative space ratio
+
+Replace from my brand:
+✗ Colors → DESIGN.md
+✗ Fonts → DESIGN.md
+✗ Voice → DESIGN.md voice rules
+✗ Specific imagery → my brand's imagery rules
+✗ The accent move → wherever my system says
+
+<span class="section-divider">═══ STEP 3: VARIATIONS ═══</span>
+
+Render 3 variations side by side on canvas at the original's exact dimensions:
+
+  <span class="accent">V1. FAITHFUL</span>     — closest mapping to the original
+  <span class="accent">V2. CONFIDENT</span>    — push my brand's signature gesture harder
+  <span class="accent">V3. RISKY</span>        — invert one decision from the original
+                  (if dense → sparse). Brave version.
+
+<span class="section-divider">═══ STEP 4: VERDICT ═══</span>
+
+After rendering:
+1. Which variation would YOU ship and why?
+2. Predict A/B test ranking of original vs my V1-V3.
+3. What did the original do that I should NOT copy?</pre>
+    <div class="prompt-after">
+      <div class="prompt-after-label">Where to find ads</div>
+      <p class="prompt-after-text">Screenshot from your LinkedIn feed (anything that stopped your scroll). Or saved to Pinterest. Or AdsLibrary on Facebook for paid ads. The bigger the brand you reverse-engineer, the more you learn — Stripe, Linear, Notion, Hormozi, Justin Welsh.</p>
+    </div>
+  </div>
+
+  <!-- PROMPT 04: PINTEREST -->
+  <div class="page">
+    <div class="prompt-header">
+      <p class="eyebrow-text">PROMPT 04 / 05  //  PINTEREST TO MY LAYOUT</p>
+      <h2 class="prompt-title">Borrow structure. Never colors.</h2>
+      <div class="prompt-meta">
+        <div class="prompt-meta-cell">
+          <div class="label">When to run</div>
+          <div class="value">When you find a beautiful layout (magazine, poster, album art) but the brand is nothing like yours.</div>
+        </div>
+        <div class="prompt-meta-cell">
+          <div class="label">What it does</div>
+          <div class="value">Extracts compositional structure only. Renders 2 variations on canvas in your brand: faithful and loosened.</div>
+        </div>
+      </div>
+    </div>
+    <pre class="prompt-block"><span class="section-divider">═══ INPUT ═══</span>
+
+<span class="accent">[ATTACH PINTEREST IMAGE]</span>
+(Magazine cover, poster, album art, or editorial layout.)
+
+What I want to build: <span class="accent">[carousel cover / image post / one-pager / banner / pitch slide]</span>
+
+<span class="section-divider">═══ EXTRACTION TARGETS ═══</span>
+
+In chat (no rendering yet), tell me:
+
+<span class="accent">The grid</span>
+  - Asymmetric, symmetric, or modular?
+  - Where are the alignment lines?
+  - Column structure?
+
+<span class="accent">The focal point</span>
+  - What pulls the eye first?
+  - How is it framed?
+  - Ratio of focal-area to total-area?
+
+<span class="accent">The typography hierarchy</span>
+  - Hero size : body size ratio
+  - Number of distinct type styles
+  - Where does type sit relative to focal point?
+
+<span class="accent">The density rhythm</span>
+  - Crowded → empty, or even?
+  - Where does the eye rest?
+
+<span class="section-divider">═══ APPLY TO MY BRAND ═══</span>
+
+Render the artifact on canvas in MY brand. Structure borrowed,
+everything else mine.
+
+Forbidden imports:
+✗ Colors (use DESIGN.md)
+✗ Fonts (use DESIGN.md)
+✗ Imagery (use my brand's imagery rules)
+✗ Mood (my brand has its own)
+
+Required from reference:
+✓ The grid structure
+✓ The focal-point framing
+✓ The negative space ratio
+✓ The type hierarchy ratio
+
+<span class="section-divider">═══ OUTPUT ═══</span>
+
+Render two variations side by side on canvas:
+
+  <span class="accent">V1. FAITHFUL</span>  — structure 1:1, brand applied
+  <span class="accent">V2. LOOSENED</span>  — structure simplified by 20%, more breathing room
+
+<span class="section-divider">═══ AFTER ═══</span>
+
+In ONE paragraph (no bullets):
+- What you transferred from the reference (specific layout decisions)
+- What you deliberately did not transfer
+- Which variation feels more like the brand and why
+
+<span class="section-divider">═══ THE TASTE TEST ═══</span>
+
+Before rendering, ask yourself:
+
+"If I removed all colors and fonts, would a designer see the same
+skeleton in my V1 and the reference's wireframe?"
+
+If yes → nailed it. If no → redo.</pre>
+    <div class="prompt-after">
+      <div class="prompt-after-label">Reference picks that always work</div>
+      <p class="prompt-after-text">Editorial: Wallpaper, Kinfolk, Cereal magazine covers. Cinematic: A24 movie posters, album covers (Frank Ocean's Blonde, Tame Impala). Swiss design: vintage Müller-Brockmann posters. Pick a reference OPPOSITE to your brand for maximum effect — the contrast is the magic.</p>
+    </div>
+  </div>
+
+  <!-- PROMPT 05: ITERATE -->
+  <div class="page">
+    <div class="prompt-header">
+      <p class="eyebrow-text">PROMPT 05 / 05  //  ITERATE TO REFINE</p>
+      <h2 class="prompt-title">Ship, don't restart.</h2>
+      <div class="prompt-meta">
+        <div class="prompt-meta-cell">
+          <div class="label">When to run</div>
+          <div class="value">After any artifact, when 80% is right and 20% needs adjusting. Use the chat OR Claude Design's inline comments.</div>
+        </div>
+        <div class="prompt-meta-cell">
+          <div class="label">What it does</div>
+          <div class="value">Renders V1 and V2 side by side on canvas. Diff explained in 60 words in chat.</div>
+        </div>
+      </div>
+    </div>
+    <pre class="prompt-block"><span class="section-divider">═══ INPUT ═══</span>
+
+The artifact you just rendered: <span class="accent">[name it]</span>
+
+<span class="section-divider">═══ MY DIRECTION ═══</span>
+
+Want to push:
+  + <span class="accent">[thing to amplify]</span>
+  + <span class="accent">[thing to amplify]</span>
+
+Want to soften:
+  - <span class="accent">[thing to dial back]</span>
+  - <span class="accent">[thing to dial back]</span>
+
+Want to try:
+  ? <span class="accent">[experiment, optional]</span>
+
+Keep untouched: <span class="accent">[list anything sacred]</span>
+
+<span class="section-divider">═══ EXECUTION ═══</span>
+
+Step 1: Acknowledge the spec. Repeat back what you're amplifying,
+softening, and trying. If anything is ambiguous, ask ONE question.
+
+Step 2: Render V2 on canvas next to V1 (split view, same canvas size).
+
+Step 3: In chat, give me a 60-word "diff explained" — the specific
+decisions you made and why.
+
+<span class="section-divider">═══ DIFF DISCIPLINE ═══</span>
+
+A real iteration changes 3-5 things, not 30.
+
+If you find yourself rebuilding half the artifact, you are starting over.
+Pause and ask if that's what I want.
+
+<span class="section-divider">═══ TASTE CALIBRATION ═══</span>
+
+Before rendering V2:
+
+☐ Is V2 still recognisably the same artifact, just better?
+☐ Does it solve the spec or just change for change's sake?
+☐ Have I preserved every "Keep untouched" item literally?
+
+If any answer is no, fix V2 before rendering.
+
+<span class="section-divider">═══ AFTER ═══</span>
+
+Two questions:
+1. Ship V1, ship V2, or run another iteration?
+2. If we iterate again, what's the smallest next change?</pre>
+    <div class="prompt-after">
+      <div class="prompt-after-label">When to use inline comments instead</div>
+      <p class="prompt-after-text">For ONE small thing ("make this headline 20% bigger"), use Claude Design's inline comment on the element. For STRUCTURAL changes (composition, multiple decisions), use this prompt in chat. Inline = fast tactical edit. Chat = strategic iteration.</p>
+    </div>
+  </div>
+
+</body>
+</html>
