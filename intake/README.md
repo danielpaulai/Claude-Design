@@ -9,7 +9,8 @@ This is the kit that ships inside `brand-in-a-box.zip`.
 - `INTAKE-EXAMPLE.md` — what a finished intake looks like (Purely Personal — Editorial Minimal).
 - `SKILL.md` — the agent-invocable skill that reads `INTAKE.md` and generates your design system.
 - `EXAMPLES/purely-personal/` — Editorial Minimal generated system (sans-serif, hot red, 0px corners).
-- `EXAMPLES/marigold-and-oak/` — Warm Editorial generated system (serif, terracotta, 8px corners). Different family, same SKILL — proof the system works for any brand.
+- `EXAMPLES/marigold-and-oak/` — Warm Editorial generated system (serif, terracotta, 8px corners).
+- `EXAMPLES/voltage-labs/` — Cinematic Dark generated system (geometric sans, electric cyan, void canvas). Three different families, same SKILL — proof the system works for any brand.
 
 ## How to use
 

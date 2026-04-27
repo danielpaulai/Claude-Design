@@ -4,7 +4,9 @@ A 10-question form that turns into a complete brand design system in Claude.
 
 Built for the [Purely Personal workshop](https://purely-personal-workshop.vercel.app/). MIT licensed. Take it, fork it, ship it.
 
-[**→ Try the live form**](https://claude-design.vercel.app/) · [**↓ Download the zip**](https://claude-design.vercel.app/brand-in-a-box.zip) · [**Browse examples**](examples/)
+[**→ Try the live form**](https://claude-design-beginners.vercel.app/) · [**↓ Download the zip**](https://claude-design-beginners.vercel.app/brand-in-a-box.zip) · [**Browse examples**](examples/)
+
+![Brand In A Box demo — fill the form, watch your brand appear, generate the prompt](docs/demo.gif)
 
 ---
 
@@ -34,11 +36,15 @@ Claude-Design/
 │
 ├── examples/                     Generated systems. Proof the SKILL works on different families.
 │   ├── purely-personal/          Editorial Minimal — sans-serif, hot red, 0px corners.
-│   └── marigold-and-oak/         Warm Editorial — serif, terracotta, 8px corners.
+│   ├── marigold-and-oak/         Warm Editorial — serif, terracotta, 8px corners.
+│   └── voltage-labs/             Cinematic Dark — geo sans, electric cyan, void canvas.
 │
 ├── public/                       Static assets served by Vercel.
-│   ├── index.html                The interactive form (served at /).
+│   ├── index.html                The interactive form with live brand preview (served at /).
+│   ├── og-image.html             Source for the social card. Screenshot at 1200×630.
 │   └── brand-in-a-box.zip        The downloadable kit (built by scripts/bundle-zip.sh).
+│
+├── docs/                         Recording instructions for the demo GIF and OG image.
 │
 ├── scripts/
 │   └── bundle-zip.sh             Builds public/brand-in-a-box.zip from intake/ + examples/.
@@ -52,7 +58,7 @@ Claude-Design/
 
 ## How to use it (workshop attendee)
 
-1. Open the [live form](https://claude-design.vercel.app/).
+1. Open the [live form](https://claude-design-beginners.vercel.app/).
 2. Fill in 10 questions. Four minutes if you move fast.
 3. Click **Generate Claude prompt**. Copy.
 4. Click **Download brand-in-a-box.zip**. Unzip.
@@ -105,7 +111,13 @@ your-brand-slug/
 └── samples/                  One HTML artifact per format you ticked
 ```
 
-Browse [`examples/`](examples/) for two complete worked examples — [Purely Personal](examples/purely-personal/) (Editorial Minimal) and [Marigold & Oak](examples/marigold-and-oak/) (Warm Editorial). Same SKILL, two different aesthetic families, two coherent systems.
+Browse [`examples/`](examples/) for three complete worked examples:
+
+- [Purely Personal](examples/purely-personal/) — Editorial Minimal (sans, hot red, 0px corners)
+- [Marigold & Oak](examples/marigold-and-oak/) — Warm Editorial (serif, terracotta, 8px corners)
+- [Voltage Labs](examples/voltage-labs/) — Cinematic Dark (geo sans, electric cyan, void canvas)
+
+Same SKILL, three different aesthetic families, three coherent systems. Proof the kit works for any brand, not just the founder who built it.
 
 ---
 
@@ -169,11 +181,14 @@ The 90-minute session is "Claude Design Killed Canva: Learn How to Master It in 
 - [x] Brand-in-a-box generator skill with deepening pass
 - [x] Worked example (Purely Personal — Editorial Minimal)
 - [x] Worked example (Marigold & Oak — Warm Editorial)
+- [x] Worked example (Voltage Labs — Cinematic Dark)
 - [x] Interactive HTML form with prompt generator
+- [x] Live brand preview in the form (colors and fonts update as you type)
 - [x] Auto-bundling zip script
-- [x] Vercel deploy config
+- [x] Vercel deploy config + OG meta tags
 - [x] Offline-fillable HTML form bundled in the zip
-- [ ] Cinematic Dark example (RunwayML-style brand)
+- [ ] Demo GIF in this README (see [docs/demo-recording.md](docs/demo-recording.md))
+- [ ] OG image PNG (see [docs/og-image-instructions.md](docs/og-image-instructions.md))
 - [ ] Live brand preview in form (colors and fonts update as you type)
 - [ ] Print-to-PDF of the filled form
 - [ ] OG image / social share card

@@ -4,9 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Brand In A Box — Intake</title>
+  <meta name="description" content="A 10-question form that generates a complete brand design system in Claude. Built for the Purely Personal workshop.">
+  <meta property="og:title" content="Brand In A Box — A 10-question form for your brand design system">
+  <meta property="og:description" content="Answer 10 questions. Generate a Claude prompt. Walk out with a complete brand design system in 90 seconds.">
+  <meta property="og:image" content="https://claude-design-beginners.vercel.app/og-image.png">
+  <meta property="og:url" content="https://claude-design-beginners.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Brand In A Box">
+  <meta name="twitter:description" content="A 10-question form for your brand design system. Built in Claude. 90 seconds.">
+  <meta name="twitter:image" content="https://claude-design-beginners.vercel.app/og-image.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Crimson+Pro:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;600;800&family=Playfair+Display:wght@400;700&family=Rethink+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --color-red: #e90d41;
@@ -29,9 +39,125 @@
       -webkit-font-smoothing: antialiased;
     }
     .container {
-      max-width: 720px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 64px 24px 128px;
+    }
+    .header { max-width: 720px; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 48px;
+      align-items: start;
+    }
+    .form-column { min-width: 0; }
+    .preview-column { position: sticky; top: 24px; }
+    .preview-sticky {
+      background: var(--color-near-black);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(10, 10, 10, 0.12);
+    }
+    .preview-label {
+      padding: 12px 16px;
+      background: var(--color-white);
+      color: var(--color-near-black);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--color-gray-100);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preview-label .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: var(--color-red);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .preview-canvas {
+      min-height: 380px;
+      padding: 32px;
+      background: #f7f7f8;
+      color: #0a0a0a;
+      font-family: 'Rethink Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: background 250ms ease, color 250ms ease;
+    }
+    .preview-eyebrow {
+      align-self: flex-start;
+      padding: 5px 12px;
+      background: #e90d41;
+      color: #ffffff;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 250ms ease, border-radius 250ms ease;
+    }
+    .preview-hero {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin: 0;
+      font-family: inherit;
+      transition: font-family 100ms;
+    }
+    .preview-body {
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0.95;
+      transition: color 250ms ease;
+    }
+    .preview-cta {
+      align-self: flex-start;
+      padding: 10px 20px;
+      background: #e90d41;
+      color: #ffffff;
+      border: none;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: default;
+      margin-top: 8px;
+      transition: background 250ms ease, border-radius 250ms ease;
+    }
+    .preview-meta {
+      padding: 10px 16px;
+      background: var(--color-near-black);
+      color: var(--color-silver);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      display: flex;
+      justify-content: space-between;
+      letter-spacing: 0.04em;
+    }
+    .preview-meta .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 9999px;
+      vertical-align: middle;
+      margin-right: 6px;
+      background: #e90d41;
+    }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; gap: 32px; }
+      .preview-column { position: static; }
+      .preview-canvas { min-height: 300px; }
     }
 
     .header { margin-bottom: 56px; }
@@ -299,6 +425,9 @@
       </div>
     </header>
 
+    <div class="layout">
+    <div class="form-column">
+
     <form id="intake" autocomplete="off">
 
       <section class="section open" data-section="1">
@@ -435,6 +564,29 @@
         </ol>
       </div>
     </div>
+
+    </div><!-- /form-column -->
+
+    <aside class="preview-column">
+      <div class="preview-sticky">
+        <div class="preview-label">
+          <span>Live brand preview</span>
+          <span class="pulse"></span>
+        </div>
+        <div class="preview-canvas" id="preview-canvas">
+          <span class="preview-eyebrow" id="preview-eyebrow">YOUR BRAND</span>
+          <h2 class="preview-hero" id="preview-hero">Your one-line description appears here.</h2>
+          <p class="preview-body" id="preview-body">Your promise appears here. Watch this update as you fill in the form.</p>
+          <button class="preview-cta" id="preview-cta">Take action</button>
+        </div>
+        <div class="preview-meta">
+          <span id="preview-family-label">Editorial Minimal</span>
+          <span><span class="swatch" id="preview-swatch"></span><span id="preview-accent-label">#e90d41</span></span>
+        </div>
+      </div>
+    </aside>
+
+    </div><!-- /layout -->
   </div>
 
   <div class="status" id="status"></div>
@@ -566,6 +718,127 @@
       el.classList.add('shown');
       setTimeout(() => el.classList.remove('shown'), 2200);
     }
+
+    /* ============ Live brand preview ============ */
+    const FAMILY_PRESETS = {
+      'Editorial Minimal': {
+        canvasBg: '#f7f7f8', text: '#0a0a0a', textMuted: 'rgba(10,10,10,0.65)',
+        accent: '#e90d41',
+        headingFont: "'Rethink Sans', 'Inter', sans-serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '9999px'
+      },
+      'Warm Editorial': {
+        canvasBg: '#fbf8f3', text: '#1a1814', textMuted: 'rgba(26,24,20,0.65)',
+        accent: '#c8543b',
+        headingFont: "'Crimson Pro', Georgia, serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '6px'
+      },
+      'Terminal Core': {
+        canvasBg: '#0a0a0a', text: '#00ff88', textMuted: 'rgba(0,255,136,0.6)',
+        accent: '#00ff88',
+        headingFont: "'JetBrains Mono', ui-monospace, monospace",
+        bodyFont: "'JetBrains Mono', ui-monospace, monospace",
+        pillRadius: '0px'
+      },
+      'Data-Dense Pro': {
+        canvasBg: '#fafbfc', text: '#0d1117', textMuted: 'rgba(13,17,23,0.6)',
+        accent: '#0969da',
+        headingFont: "'IBM Plex Sans', sans-serif",
+        bodyFont: "'IBM Plex Sans', sans-serif",
+        pillRadius: '4px'
+      },
+      'Cinematic Dark': {
+        canvasBg: '#000000', text: '#f5f5f7', textMuted: 'rgba(245,245,247,0.55)',
+        accent: '#00d4ff',
+        headingFont: "'Space Grotesk', sans-serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '6px'
+      },
+      'Playful Color': {
+        canvasBg: '#fff8e1', text: '#1a1340', textMuted: 'rgba(26,19,64,0.6)',
+        accent: '#ff5e3a',
+        headingFont: "'Outfit', sans-serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '9999px'
+      },
+      'Glass / Soft-Futurism': {
+        canvasBg: '#f5f5f7', text: '#1d1d1f', textMuted: 'rgba(29,29,31,0.6)',
+        accent: '#0066cc',
+        headingFont: "'Inter', sans-serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '9999px'
+      },
+      'Neon Brutalist': {
+        canvasBg: '#fffe00', text: '#000000', textMuted: 'rgba(0,0,0,0.7)',
+        accent: '#ff00aa',
+        headingFont: "'Bowlby One', sans-serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '0px'
+      },
+      'Cult / Indie': {
+        canvasBg: '#1a1a1a', text: '#e5e5e0', textMuted: 'rgba(229,229,224,0.6)',
+        accent: '#d4a574',
+        headingFont: "'Playfair Display', serif",
+        bodyFont: "'Inter', sans-serif",
+        pillRadius: '2px'
+      }
+    };
+
+    function isValidHex(str) {
+      return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(str);
+    }
+
+    function updatePreview() {
+      const family = document.getElementById('family').value || 'Editorial Minimal';
+      const preset = FAMILY_PRESETS[family] || FAMILY_PRESETS['Editorial Minimal'];
+      const accentInput = document.getElementById('accent').value.trim();
+      const accent = isValidHex(accentInput) ? accentInput : preset.accent;
+
+      const bizName = document.getElementById('biz_name').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const promise = document.getElementById('promise').value.trim();
+
+      const canvas = document.getElementById('preview-canvas');
+      canvas.style.background = preset.canvasBg;
+      canvas.style.color = preset.text;
+      canvas.style.fontFamily = preset.bodyFont;
+
+      const eyebrow = document.getElementById('preview-eyebrow');
+      eyebrow.style.background = accent;
+      eyebrow.style.color = '#ffffff';
+      eyebrow.style.borderRadius = preset.pillRadius;
+      eyebrow.textContent = bizName ? bizName.toUpperCase() : 'YOUR BRAND';
+
+      const hero = document.getElementById('preview-hero');
+      hero.style.fontFamily = preset.headingFont;
+      hero.style.color = preset.text;
+      hero.textContent = description || 'Your one-line description appears here.';
+
+      const body = document.getElementById('preview-body');
+      body.style.color = preset.textMuted;
+      body.style.fontFamily = preset.bodyFont;
+      body.textContent = promise || 'Your promise appears here. Watch it update.';
+
+      const cta = document.getElementById('preview-cta');
+      cta.style.background = accent;
+      cta.style.borderRadius = preset.pillRadius;
+      cta.style.fontFamily = preset.bodyFont;
+
+      document.getElementById('preview-family-label').textContent = family;
+      document.getElementById('preview-accent-label').textContent = accent;
+      document.getElementById('preview-swatch').style.background = accent;
+    }
+
+    ['family', 'accent', 'description', 'promise', 'biz_name'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', updatePreview);
+      el.addEventListener('change', updatePreview);
+    });
+
+    updatePreview();
   </script>
 </body>
 </html>
