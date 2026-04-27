@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brand In A Box — Intake</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-red: #e90d41;
+      --color-near-black: #0a0a0a;
+      --color-silver: #b8bec1;
+      --color-white: #ffffff;
+      --color-off-white: #f7f7f8;
+      --color-gray-100: #e8eaec;
+      --color-gray-500: #6b7075;
+      --color-gray-700: #3a3d40;
+      --font-heading: 'Rethink Sans', 'Inter', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--color-off-white); }
+    body {
+      font-family: var(--font-body);
+      color: var(--color-near-black);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 64px 24px 128px;
+    }
+
+    .header { margin-bottom: 56px; }
+    .eyebrow {
+      display: inline-block;
+      background: var(--color-red);
+      color: var(--color-white);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 56px;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      margin: 0 0 16px;
+    }
+    .lede {
+      font-size: 18px;
+      color: var(--color-gray-500);
+      margin: 0;
+      max-width: 600px;
+    }
+    .meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--color-gray-500);
+      flex-wrap: wrap;
+    }
+    .meta strong { color: var(--color-near-black); font-weight: 600; }
+
+    .section {
+      background: var(--color-white);
+      border: 2px solid var(--color-near-black);
+      margin-bottom: 16px;
+    }
+    .section-header {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 24px 32px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--color-near-black);
+    }
+    .section-header:hover { background: var(--color-off-white); }
+    .section-header .num { color: var(--color-red); margin-right: 12px; }
+    .section-header .toggle {
+      font-size: 28px;
+      color: var(--color-near-black);
+      font-weight: 300;
+      transition: transform 200ms;
+      line-height: 1;
+    }
+    .section-body { padding: 0 32px 32px; display: none; }
+    .section.open .section-body { display: block; }
+    .section.open .toggle { transform: rotate(45deg); }
+
+    .field { margin-bottom: 28px; }
+    .field:last-child { margin-bottom: 0; }
+    .label {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 6px;
+      display: block;
+      letter-spacing: -0.01em;
+    }
+    .label .q-num { color: var(--color-red); margin-right: 8px; }
+    .label .opt { color: var(--color-gray-500); font-weight: 400; font-size: 14px; }
+    .hint {
+      font-size: 13px;
+      color: var(--color-gray-500);
+      margin: 0 0 12px;
+      line-height: 1.5;
+    }
+    .hint .ex { color: var(--color-near-black); font-style: italic; }
+    .hint strong { color: var(--color-near-black); font-weight: 600; }
+
+    input[type="text"], input[type="url"], textarea, select {
+      width: 100%;
+      padding: 12px 16px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      border: 1px solid var(--color-silver);
+      border-radius: 8px;
+      background: var(--color-white);
+      color: var(--color-near-black);
+      transition: border-color 120ms;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--color-red);
+      box-shadow: 0 0 0 3px rgba(233, 13, 65, 0.15);
+    }
+    textarea { min-height: 96px; resize: vertical; line-height: 1.5; }
+    textarea.samples {
+      min-height: 240px;
+      font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+      font-size: 14px;
+    }
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%230a0a0a' d='M6 8L0 0h12z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .checkboxes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--color-gray-100);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      transition: all 120ms;
+    }
+    .check:hover { border-color: var(--color-near-black); }
+    .check input { margin: 0; accent-color: var(--color-red); flex-shrink: 0; }
+    .check.checked { border-color: var(--color-near-black); background: var(--color-off-white); }
+
+    .generate-wrap { margin-top: 40px; text-align: center; }
+    .btn {
+      display: inline-block;
+      background: var(--color-red);
+      color: var(--color-white);
+      border: none;
+      padding: 18px 36px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.01em;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: opacity 120ms, transform 120ms;
+    }
+    .btn:hover { opacity: 0.92; }
+    .btn:active { transform: translateY(1px); }
+    .btn-secondary {
+      background: var(--color-near-black);
+      color: var(--color-white);
+      padding: 14px 24px;
+      font-size: 14px;
+    }
+
+    .output { margin-top: 32px; display: none; }
+    .output.shown { display: block; }
+    .output h2 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      margin: 32px 0 8px;
+    }
+    .output-box {
+      background: var(--color-near-black);
+      color: var(--color-white);
+      padding: 24px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      max-height: 480px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 16px 0 0;
+    }
+    .output-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-white);
+      color: var(--color-near-black);
+      border: 2px solid var(--color-near-black);
+      padding: 12px 22px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 9999px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 120ms;
+    }
+    .download:hover { background: var(--color-near-black); color: var(--color-white); }
+
+    .next-steps {
+      background: var(--color-off-white);
+      border-left: 3px solid var(--color-red);
+      padding: 16px 20px;
+      margin-top: 24px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .next-steps strong { font-family: var(--font-heading); font-weight: 700; }
+    .next-steps ol { margin: 8px 0 0; padding-left: 20px; }
+
+    .status {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--color-near-black);
+      color: var(--color-white);
+      padding: 12px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 200ms, transform 200ms;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .status.shown { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 16px 96px; }
+      h1 { font-size: 36px; }
+      .checkboxes { grid-template-columns: 1fr; }
+      .section-header { padding: 20px 24px; font-size: 17px; }
+      .section-body { padding: 0 24px 24px; }
+      .meta { gap: 16px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <span class="eyebrow">Workshop intake</span>
+      <h1>Brand in a box.</h1>
+      <p class="lede">Answer 10 questions. Generate the prompt. Drop it into Claude with the template zip. Walk out with a working brand design system.</p>
+      <div class="meta">
+        <span><strong>10</strong> questions</span>
+        <span><strong>4</strong> minutes fast</span>
+        <span><strong>Auto-saves</strong> as you type</span>
+      </div>
+    </header>
+
+    <form id="intake" autocomplete="off">
+
+      <section class="section open" data-section="1">
+        <button type="button" class="section-header">
+          <span><span class="num">1.</span>The brand</span>
+          <span class="toggle">+</span>
+        </button>
+        <div class="section-body">
+
+          <div class="field">
+            <label class="label" for="biz_name"><span class="q-num">1.</span>Business name</label>
+            <p class="hint">Or your name, if you are the brand. <span class="ex">Example: Purely Personal.</span></p>
+            <input type="text" id="biz_name" name="biz_name">
+          </div>
+
+          <div class="field">
+            <label class="label" for="description"><span class="q-num">2.</span>One-line description</label>
+            <p class="hint">If a stranger asked at a party, what is the sentence? <span class="ex">Example: I build founders an AI-native content engine that turns LinkedIn into an inbound client channel.</span></p>
+            <textarea id="description" name="description"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="label" for="audience"><span class="q-num">3.</span>Who you serve, in one sentence</label>
+            <p class="hint">Avoid "anyone who wants to grow." Pick the one person. <span class="ex">Example: Solo founders running $100K to $5M coaching businesses where the founder is the brand.</span></p>
+            <textarea id="audience" name="audience"></textarea>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="section" data-section="2">
+        <button type="button" class="section-header">
+          <span><span class="num">2.</span>The transformation</span>
+          <span class="toggle">+</span>
+        </button>
+        <div class="section-body">
+
+          <div class="field">
+            <label class="label" for="pain"><span class="q-num">4.</span>The pain you solve</label>
+            <p class="hint">What do they say out loud at 11pm on a Tuesday? <span class="ex">Example: I post on LinkedIn for 12 hours a week and nobody books a call.</span></p>
+            <textarea id="pain" name="pain"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="label" for="promise"><span class="q-num">5.</span>The promise</label>
+            <p class="hint">Outcome with a number and a timeframe. <span class="ex">Example: 90 days of on-brand content in two hours a week, not twelve.</span></p>
+            <textarea id="promise" name="promise"></textarea>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="section" data-section="3">
+        <button type="button" class="section-header">
+          <span><span class="num">3.</span>How it should look and sound</span>
+          <span class="toggle">+</span>
+        </button>
+        <div class="section-body">
+
+          <div class="field">
+            <label class="label" for="family"><span class="q-num">6.</span>Pick one aesthetic family</label>
+            <p class="hint">You can change later. Pick the closest.</p>
+            <select id="family" name="family">
+              <option value="">— pick one —</option>
+              <option value="Editorial Minimal">Editorial Minimal — calm neutrals, big type (Linear, Stripe, Vercel)</option>
+              <option value="Warm Editorial">Warm Editorial — terracotta and cream (Claude, Notion, Resend)</option>
+              <option value="Terminal Core">Terminal Core — mono, dark, IDE energy (Warp, Raycast, Ollama)</option>
+              <option value="Data-Dense Pro">Data-Dense Pro — charts everywhere (ClickHouse, PostHog, Grafana)</option>
+              <option value="Cinematic Dark">Cinematic Dark — black, hero imagery (RunwayML, NVIDIA, ElevenLabs)</option>
+              <option value="Playful Color">Playful Color — saturated, motion (Figma, Duolingo, Toss)</option>
+              <option value="Glass / Soft-Futurism">Glass / Soft-Futurism — frost, depth (Apple, Arc, Airbnb)</option>
+              <option value="Neon Brutalist">Neon Brutalist — loud, anti-corporate (The Verge, Pitchfork, PlayStation)</option>
+              <option value="Cult / Indie">Cult / Indie — quiet weirdness (A24, Criterion, Obsidian)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="samples"><span class="q-num">7.</span>Three writing samples</label>
+            <p class="hint"><strong>Most important question on the form.</strong> Paste 3 of your own posts, emails, or DMs. The system extracts your voice rules from these — pronouns, sentence rhythm, banned phrases — better than you can describe them yourself.</p>
+            <textarea id="samples" name="samples" class="samples" placeholder="[sample 1]&#10;&#10;[sample 2]&#10;&#10;[sample 3]"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="label"><span class="q-num">8.</span>Tick the formats you ship</label>
+            <p class="hint">The system builds one starter artifact per ticked box.</p>
+            <div class="checkboxes">
+              <label class="check"><input type="checkbox" name="format" value="LinkedIn carousel (1080x1350)"><span>LinkedIn carousel</span></label>
+              <label class="check"><input type="checkbox" name="format" value="LinkedIn cheatsheet (1080x1350)"><span>LinkedIn cheatsheet</span></label>
+              <label class="check"><input type="checkbox" name="format" value="LinkedIn image post (1080x1350)"><span>LinkedIn image post</span></label>
+              <label class="check"><input type="checkbox" name="format" value="LinkedIn banner (1584x396)"><span>LinkedIn banner</span></label>
+              <label class="check"><input type="checkbox" name="format" value="LinkedIn article header (1080x607)"><span>Article header</span></label>
+              <label class="check"><input type="checkbox" name="format" value="One-page offer sheet (A4 @ 300dpi)"><span>One-page offer</span></label>
+              <label class="check"><input type="checkbox" name="format" value="Pitch deck (16:9)"><span>Pitch deck</span></label>
+              <label class="check"><input type="checkbox" name="format" value="Landing page (1440 wide)"><span>Landing page</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="website"><span class="q-num">9.</span>Live website URL <span class="opt">(optional)</span></label>
+            <p class="hint">If you have one, the system pulls colours, type, and tone as a starting point.</p>
+            <input type="url" id="website" name="website" placeholder="https://...">
+          </div>
+
+          <div class="field">
+            <label class="label" for="accent"><span class="q-num">10.</span>Accent colour <span class="opt">(optional)</span></label>
+            <p class="hint">The one hex that means "look here." Leave blank to let the family default win. <span class="ex">Example: #e90d41.</span></p>
+            <input type="text" id="accent" name="accent" placeholder="#e90d41" maxlength="7">
+          </div>
+
+        </div>
+      </section>
+
+    </form>
+
+    <div class="generate-wrap">
+      <button type="button" class="btn" id="generate">Generate Claude prompt →</button>
+    </div>
+
+    <div class="output" id="output">
+      <h2>Your prompt</h2>
+      <p class="hint" style="margin: 0;">Copy this. Open Claude Code or Claude Desktop with brand-in-a-box.zip in your working directory. Paste.</p>
+      <pre class="output-box" id="output-text"></pre>
+      <div class="output-actions">
+        <button type="button" class="btn btn-secondary" id="copy">📋 Copy to clipboard</button>
+        <a class="download" href="brand-in-a-box.zip" download>↓ Download brand-in-a-box.zip</a>
+      </div>
+
+      <div class="next-steps">
+        <strong>What happens next</strong>
+        <ol>
+          <li>Open Claude Code or Claude Desktop in the folder where you saved the zip.</li>
+          <li>Paste the prompt. Hit enter.</li>
+          <li>In about 90 seconds you have a folder with brand/, DESIGN.md, SKILL.md, colors_and_type.css, and a starter sample for each format you ticked.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <script>
+    const STORAGE_KEY = 'brand-in-a-box-intake-v1';
+
+    document.querySelectorAll('.section-header').forEach(btn => {
+      btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
+    });
+
+    document.querySelectorAll('.check input').forEach(cb => {
+      const update = () => cb.parentElement.classList.toggle('checked', cb.checked);
+      cb.addEventListener('change', update);
+      update();
+    });
+
+    function save() {
+      const form = document.getElementById('intake');
+      const data = {};
+      Array.from(form.elements).forEach(el => {
+        if (!el.name) return;
+        if (el.type === 'checkbox') {
+          data[el.name] = data[el.name] || [];
+          if (el.checked) data[el.name].push(el.value);
+        } else {
+          data[el.name] = el.value;
+        }
+      });
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+
+    function restore() {
+      let raw;
+      try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { return; }
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        const form = document.getElementById('intake');
+        Array.from(form.elements).forEach(el => {
+          if (!el.name) return;
+          if (el.type === 'checkbox') {
+            el.checked = (data[el.name] || []).includes(el.value);
+            el.dispatchEvent(new Event('change'));
+          } else if (data[el.name] !== undefined) {
+            el.value = data[el.name];
+          }
+        });
+      } catch (e) {}
+    }
+
+    document.getElementById('intake').addEventListener('input', save);
+    document.getElementById('intake').addEventListener('change', save);
+    restore();
+
+    document.getElementById('generate').addEventListener('click', () => {
+      const v = id => document.getElementById(id).value.trim();
+      const formats = Array.from(document.querySelectorAll('.check input:checked'))
+        .map(cb => '- ' + cb.value)
+        .join('\n') || '- (none ticked yet — pick at least one)';
+
+      const prompt = [
+        "I am using the Brand In A Box template (zip attached).",
+        "",
+        "Read SKILL.md and run the brand-in-a-box skill on the intake below.",
+        "",
+        "=== MY INTAKE ===",
+        "",
+        "## 1 - The brand",
+        "",
+        "1. Business name: " + (v('biz_name') || '____'),
+        "2. One-line description: " + (v('description') || '____'),
+        "3. Who I serve: " + (v('audience') || '____'),
+        "",
+        "## 2 - The transformation",
+        "",
+        "4. The pain I solve: " + (v('pain') || '____'),
+        "5. The promise: " + (v('promise') || '____'),
+        "",
+        "## 3 - How it should look and sound",
+        "",
+        "6. Aesthetic family: " + (v('family') || '____'),
+        "",
+        "7. Three writing samples:",
+        "```",
+        v('samples') || '[no samples provided - output quality will drop]',
+        "```",
+        "",
+        "8. Formats I ship:",
+        formats,
+        "",
+        "9. Live website URL: " + (v('website') || '(none)'),
+        "10. Accent colour: " + (v('accent') || '(default - pick from family)'),
+        "",
+        "=== END INTAKE ===",
+        "",
+        "Generate the full output folder per the SKILL's instructions.",
+        "Show me the folder path when done."
+      ].join('\n');
+
+      const out = document.getElementById('output-text');
+      out.textContent = prompt;
+      document.getElementById('output').classList.add('shown');
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('copy').addEventListener('click', async () => {
+      const text = document.getElementById('output-text').textContent;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        showStatus('Copied to clipboard');
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); showStatus('Copied to clipboard'); }
+        catch { showStatus('Copy failed - select and copy manually'); }
+        document.body.removeChild(ta);
+      }
+    });
+
+    function showStatus(msg) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.classList.add('shown');
+      setTimeout(() => el.classList.remove('shown'), 2200);
+    }
+  </script>
+</body>
+</html>

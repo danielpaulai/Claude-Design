@@ -1,0 +1,10 @@
+.DS_Store
+.vercel
+node_modules/
+*.log
+.env
+.env.local
+.env.*.local
+
+# Build output stays committed (it's the deploy artifact)
+# !public/brand-in-a-box.zip
