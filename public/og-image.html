@@ -29,6 +29,11 @@
       min-height: 100vh;
       font-family: var(--font-body);
     }
+    /* Render mode: at exactly 1200px viewport, strip the preview frame so the canvas is the whole body. */
+    @media (max-width: 1280px) {
+      body { padding: 0; background: var(--color-off-white); min-height: auto; }
+      .canvas { box-shadow: none; }
+    }
     .canvas {
       width: 1200px;
       height: 630px;
@@ -45,7 +50,7 @@
       gap: 64px;
       align-items: stretch;
     }
-    .left { display: flex; flex-direction: column; justify-content: space-between; }
+    .left { display: flex; flex-direction: column; justify-content: center; gap: 24px; }
     .top { display: flex; flex-direction: column; gap: 20px; }
     .eyebrow {
       display: inline-block;
@@ -141,9 +146,6 @@
           <span class="eyebrow">// CLAUDE-DESIGN</span>
           <h1 class="hero">Brand <span class="accent">in a box.</span></h1>
           <p class="lede">10 questions. 1 prompt. A complete brand design system in Claude. In 90 seconds.</p>
-        </div>
-        <div class="footer">
-          <span class="badge">CLAUDE-DESIGN-BEGINNERS<span class="dot">.</span>VERCEL<span class="dot">.</span>APP</span>
         </div>
       </div>
       <div class="right">
