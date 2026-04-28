@@ -686,6 +686,10 @@ If you're over time:
 
 # GENSPARK INSTRUCTIONS — How to build this deck
 
+**For detailed per-slide prompts with exact fonts, sizes, colors, spacing, and composition specs, see [genspark-slide-prompts.md](genspark-slide-prompts.md).** That file has 19 individual slide prompts you can copy one at a time.
+
+The quick one-shot version is below.
+
 ## Option A: One-shot — paste this into Genspark
 
 ```
