@@ -8,3 +8,7 @@ node_modules/
 
 # Build output stays committed (it's the deploy artifact)
 # !public/brand-in-a-box.zip
+
+# Local-only artifacts
+.video-out/
+node_modules/

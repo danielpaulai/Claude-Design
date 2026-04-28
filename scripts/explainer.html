@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Claude Design — Explainer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Rethink+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-red: #e90d41;
+      --color-near-black: #0a0a0a;
+      --color-off-white: #f7f7f8;
+      --color-white: #ffffff;
+      --color-silver: #b8bec1;
+      --color-gray-500: #6b7075;
+      --font-heading: 'Rethink Sans', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      width: 1280px; height: 720px;
+      overflow: hidden;
+      font-family: var(--font-body);
+      background: var(--color-off-white);
+    }
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 96px 120px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 700ms ease, transform 700ms ease;
+      pointer-events: none;
+      background: var(--color-off-white);
+    }
+    .scene.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .scene.dark { background: var(--color-near-black); color: var(--color-white); }
+
+    .eyebrow {
+      display: inline-block;
+      align-self: flex-start;
+      background: var(--color-red);
+      color: var(--color-white);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .scene.dark .eyebrow { background: var(--color-red); }
+
+    .hero {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 120px;
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      margin: 0;
+      color: inherit;
+      max-width: 1040px;
+    }
+    .hero .accent { color: var(--color-red); }
+    .hero.smaller { font-size: 88px; line-height: 1.0; }
+
+    .lede {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 1.45;
+      color: var(--color-gray-500);
+      margin: 32px 0 0;
+      max-width: 720px;
+    }
+    .scene.dark .lede { color: var(--color-silver); }
+
+    .footer-bar {
+      position: absolute;
+      bottom: 96px;
+      left: 120px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-gray-500);
+    }
+    .scene.dark .footer-bar { color: var(--color-silver); }
+    .footer-bar .dot { color: var(--color-red); margin: 0 6px; }
+
+    .scene-num {
+      position: absolute;
+      top: 96px;
+      right: 120px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--color-silver);
+    }
+    .scene.dark .scene-num { color: var(--color-silver); }
+
+    /* Per-scene flourish: stagger in elements */
+    .scene .eyebrow,
+    .scene .hero,
+    .scene .lede,
+    .scene .footer-bar,
+    .scene .scene-num {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 500ms ease, transform 500ms ease;
+    }
+    .scene.active .eyebrow { transition-delay: 200ms; opacity: 1; transform: translateY(0); }
+    .scene.active .hero { transition-delay: 400ms; opacity: 1; transform: translateY(0); }
+    .scene.active .lede { transition-delay: 700ms; opacity: 1; transform: translateY(0); }
+    .scene.active .footer-bar { transition-delay: 900ms; opacity: 1; transform: translateY(0); }
+    .scene.active .scene-num { transition-delay: 100ms; opacity: 1; transform: translateY(0); }
+
+    /* Numbers row — used for scene 9 (export options) */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 32px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 12px 24px;
+      border: 2px solid var(--color-near-black);
+      border-radius: 9999px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.005em;
+      color: var(--color-near-black);
+      background: var(--color-white);
+    }
+    .pill.accent {
+      background: var(--color-red);
+      color: var(--color-white);
+      border-color: var(--color-red);
+    }
+  </style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- Scene 1: HOOK -->
+  <section class="scene" data-scene="1">
+    <span class="scene-num">// SCENE 01 / 10</span>
+    <span class="eyebrow">An explainer · 60 seconds</span>
+    <h1 class="hero">5 days of <span class="accent">design.</span></h1>
+    <p class="lede">A brief. A Slack thread. Three rounds of revisions. A deck.</p>
+  </section>
+
+  <!-- Scene 2: PIVOT -->
+  <section class="scene" data-scene="2">
+    <span class="scene-num">// SCENE 02 / 10</span>
+    <span class="eyebrow">Or</span>
+    <h1 class="hero">5 minutes of <span class="accent">Claude Design.</span></h1>
+    <p class="lede">Same outcome. Different decade.</p>
+  </section>
+
+  <!-- Scene 3: WHAT IT IS -->
+  <section class="scene dark" data-scene="3">
+    <span class="scene-num">// SCENE 03 / 10</span>
+    <span class="eyebrow">// What it is</span>
+    <h1 class="hero smaller">Chat on the left.<br><span class="accent">Canvas on the right.</span></h1>
+    <p class="lede">Type. Render. Ship. claude.ai/design.</p>
+  </section>
+
+  <!-- Scene 4: USE CASE 1 — Build a brand -->
+  <section class="scene" data-scene="4">
+    <span class="scene-num">// SCENE 04 / 10</span>
+    <span class="eyebrow">Use case 01 · Brand</span>
+    <h1 class="hero">Build your <span class="accent">brand</span> in 90 seconds.</h1>
+    <p class="lede">10 questions. One paste. A complete design system loaded.</p>
+  </section>
+
+  <!-- Scene 5: USE CASE 2 — Carousel from a topic -->
+  <section class="scene" data-scene="5">
+    <span class="scene-num">// SCENE 05 / 10</span>
+    <span class="eyebrow">Use case 02 · Content</span>
+    <h1 class="hero">A topic. <span class="accent">A carousel.</span></h1>
+    <p class="lede">7 slides at 1080×1350. In your brand. In one prompt.</p>
+  </section>
+
+  <!-- Scene 6: USE CASE 3 — Reverse-engineer winning ads -->
+  <section class="scene" data-scene="6">
+    <span class="scene-num">// SCENE 06 / 10</span>
+    <span class="eyebrow">Use case 03 · Decode</span>
+    <h1 class="hero">Reverse-engineer <span class="accent">any winning ad.</span></h1>
+    <p class="lede">Drop a screenshot. Get 3 variations in your brand.</p>
+  </section>
+
+  <!-- Scene 7: USE CASE 4 — Pinterest aesthetic transfer -->
+  <section class="scene" data-scene="7">
+    <span class="scene-num">// SCENE 07 / 10</span>
+    <span class="eyebrow">Use case 04 · Borrow</span>
+    <h1 class="hero">Borrow <span class="accent">structure.</span> Never the colors.</h1>
+    <p class="lede">Pinterest layout in. Your brand out. Same skeleton, your DNA.</p>
+  </section>
+
+  <!-- Scene 8: USE CASE 5 — Iterate -->
+  <section class="scene" data-scene="8">
+    <span class="scene-num">// SCENE 08 / 10</span>
+    <span class="eyebrow">Use case 05 · Iterate</span>
+    <h1 class="hero">Iterate. <span class="accent">Don't restart.</span></h1>
+    <p class="lede">V1 left. V2 right. 60-word diff explained. Ship.</p>
+  </section>
+
+  <!-- Scene 9: EXPORT -->
+  <section class="scene" data-scene="9">
+    <span class="scene-num">// SCENE 09 / 10</span>
+    <span class="eyebrow">Export anywhere</span>
+    <h1 class="hero smaller">One canvas.<br><span class="accent">Six destinations.</span></h1>
+    <div class="pill-row">
+      <span class="pill">PDF</span>
+      <span class="pill">PPTX</span>
+      <span class="pill">HTML</span>
+      <span class="pill">Canva</span>
+      <span class="pill">Code</span>
+      <span class="pill accent">Zip</span>
+    </div>
+  </section>
+
+  <!-- Scene 10: CTA -->
+  <section class="scene dark" data-scene="10">
+    <span class="scene-num">// SCENE 10 / 10</span>
+    <span class="eyebrow">Brand In A Box</span>
+    <h1 class="hero">Free template.<br><span class="accent">5 prompts.</span> One page.</h1>
+    <p class="lede">Form. Brand presets. Generated prompt. Paste into Claude Design. Ship.</p>
+    <div class="footer-bar">
+      claude-design-beginners<span class="dot">.</span>vercel<span class="dot">.</span>app
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const scenes = Array.from(document.querySelectorAll('.scene'));
+  // Per-scene durations in milliseconds
+  const DURATIONS = [
+    5000,  // 1 hook
+    5000,  // 2 pivot
+    6500,  // 3 what it is
+    6000,  // 4 use case 1
+    6000,  // 5 use case 2
+    6000,  // 6 use case 3
+    6000,  // 7 use case 4
+    6000,  // 8 use case 5
+    7000,  // 9 export options (longer — pills need read time)
+    8500   // 10 CTA (longest hold for end frame)
+  ];
+
+  let i = 0;
+  function advance() {
+    scenes.forEach(s => s.classList.remove('active'));
+    scenes[i].classList.add('active');
+    if (i >= scenes.length - 1) {
+      // End — wait final hold then signal done
+      setTimeout(() => {
+        document.body.dataset.done = 'true';
+        window.dispatchEvent(new CustomEvent('explainer-done'));
+      }, DURATIONS[i]);
+      return;
+    }
+    setTimeout(() => { i += 1; advance(); }, DURATIONS[i]);
+  }
+
+  // Small lead-in before scene 1 fires (gives video recorder a beat)
+  setTimeout(advance, 500);
+</script>
+</body>
+</html>
