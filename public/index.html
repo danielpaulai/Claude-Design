@@ -160,6 +160,209 @@
       .preview-canvas { min-height: 300px; }
     }
 
+    /* ============ Step-by-step walkthrough ============ */
+
+    .steps-section {
+      margin-top: 96px;
+      border-top: 2px solid var(--color-near-black);
+      padding-top: 56px;
+    }
+
+    .steps-section-header {
+      max-width: 720px;
+      margin: 0 auto 48px;
+      text-align: center;
+    }
+    .steps-section-eyebrow {
+      display: inline-block;
+      background: var(--color-red);
+      color: var(--color-white);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .steps-section-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 56px;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin: 0 0 16px;
+    }
+    .steps-section-title .accent { color: var(--color-red); }
+    .steps-section-lede {
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--color-gray-500);
+      margin: 0;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .step-card {
+      background: var(--color-white);
+      border: 2px solid var(--color-near-black);
+      padding: 32px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .step-card-number {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 56px;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: var(--color-red);
+    }
+    .step-card-body { min-width: 0; }
+    .step-card-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin: 0 0 12px;
+      color: var(--color-near-black);
+    }
+    .step-card-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--color-near-black);
+      margin: 0 0 12px;
+    }
+    .step-card-text:last-child { margin-bottom: 0; }
+    .step-card-text strong {
+      font-weight: 600;
+      color: var(--color-near-black);
+    }
+    .step-card-text a {
+      color: var(--color-red);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 500;
+    }
+    .step-card-text code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      background: var(--color-off-white);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--color-gray-100);
+    }
+    .step-card-list {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--color-near-black);
+      margin: 0 0 12px;
+      padding-left: 20px;
+    }
+    .step-card-list li { margin-bottom: 6px; }
+
+    .step-prompt {
+      margin-top: 16px;
+      background: var(--color-near-black);
+      color: var(--color-white);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .step-prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .step-prompt-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-silver);
+    }
+    .copy-prompt-btn {
+      background: var(--color-red);
+      color: var(--color-white);
+      border: none;
+      padding: 6px 14px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: opacity 120ms;
+    }
+    .copy-prompt-btn:hover { opacity: 0.9; }
+    .step-prompt-body {
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11.5px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .step-prompt-body.expanded { max-height: none; }
+
+    .step-expected {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--color-off-white);
+      border-left: 3px solid var(--color-red);
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--color-near-black);
+    }
+    .step-expected strong {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-red);
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .step-tip {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: transparent;
+      border: 1px dashed var(--color-silver);
+      font-family: var(--font-body);
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--color-gray-500);
+      border-radius: 6px;
+    }
+
+    .replace-marker {
+      background: rgba(233, 13, 65, 0.18);
+      color: #ff7a9a;
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 700px) {
+      .step-card { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+      .step-card-number { font-size: 40px; }
+      .steps-section-title { font-size: 36px; }
+    }
+
     .header { margin-bottom: 56px; }
     .eyebrow {
       display: inline-block;
@@ -558,9 +761,10 @@
       <div class="next-steps">
         <strong>What happens next</strong>
         <ol>
-          <li>Open Claude Code or Claude Desktop in the folder where you saved the zip.</li>
-          <li>Paste the prompt. Hit enter.</li>
-          <li>In about 90 seconds you have a folder with brand/, DESIGN.md, SKILL.md, colors_and_type.css, and a starter sample for each format you ticked.</li>
+          <li>Open Claude Design at <a href="https://claude.ai/design" target="_blank" style="color: var(--color-red); text-decoration: underline;">claude.ai/design</a></li>
+          <li>Create a new project. Paste this prompt into the chat panel.</li>
+          <li>Wait for: <em>"Brand loaded. Ready."</em></li>
+          <li>Then scroll down — 6 prompts turn your brand into shippable designs.</li>
         </ol>
       </div>
     </div>
@@ -587,6 +791,275 @@
     </aside>
 
     </div><!-- /layout -->
+
+    <!-- ========== 6-STEP WALKTHROUGH ========== -->
+    <section class="steps-section" id="walkthrough">
+      <header class="steps-section-header">
+        <span class="steps-section-eyebrow">// AFTER YOU GENERATE</span>
+        <h2 class="steps-section-title">6 steps. <span class="accent">All in Claude Design.</span></h2>
+        <p class="steps-section-lede">No Claude Code. No zip downloads. No file uploads. Everything happens at claude.ai/design in one tab.</p>
+      </header>
+
+      <!-- STEP 01 -->
+      <div class="step-card">
+        <div class="step-card-number">01</div>
+        <div class="step-card-body">
+          <h3 class="step-card-title">Open Claude Design and paste your prompt</h3>
+          <p class="step-card-text">Go to <a href="https://claude.ai/design" target="_blank">claude.ai/design</a>. Create a new project. Paste the prompt you generated above into the chat panel on the left.</p>
+          <div class="step-expected">
+            <strong>What you should see back</strong>
+            Claude responds in one line: <em>"Brand loaded. [your family] family. Accent [your color]. Ready."</em> — that's your green light to keep going.
+          </div>
+          <div class="step-tip">
+            <strong>If it doesn't say Ready:</strong> your prompt may have a conflict (e.g., accent color clashing with family). Claude will surface 2-3 directions to reconcile — pick one and continue.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 02 — CAROUSEL -->
+      <div class="step-card">
+        <div class="step-card-number">02</div>
+        <div class="step-card-body">
+          <h3 class="step-card-title">Make a 7-slide LinkedIn carousel</h3>
+          <p class="step-card-text">Replace <code>[INSERT TOPIC]</code> with your idea. Paste into the same Claude Design chat. Watch 7 slides render on the canvas in your brand.</p>
+          <div class="step-prompt">
+            <div class="step-prompt-header">
+              <span class="step-prompt-label">Prompt 02 — Topic to Carousel</span>
+              <button class="copy-prompt-btn" type="button">Copy</button>
+            </div>
+            <pre class="step-prompt-body">═══ MISSION ═══
+
+Topic: <span class="replace-marker">[INSERT TOPIC]</span>
+Outcome: One LinkedIn carousel that earns me the inbound DM from my ICP.
+
+═══ STRUCTURE ═══
+
+7 slides on canvas. 1080×1350 each. Stack vertically.
+
+Slide 1 — COVER. Hook in 8-12 words. Eyebrow pill, big type, accent on ONE word. Footer module if my brand uses one.
+
+Slides 2-6 — LESSONS. Each slide does ONE job: eyebrow "STEP N" + lesson title (5-9 words) + body (2 sentences max) + one visual element. Vary the visual move slide to slide.
+
+Slide 7 — CTA. Soft, sounds like a DM not an ad. "Comment [WORD] and I'll DM you the [asset]." Below: P.S. that asks a question.
+
+═══ COPY DISCIPLINE ═══
+
+- Match my sentence rhythm within ±2 words
+- Use 1-2 of my ranked hooks (contrarian, transformation, category reframe)
+- Include one specific number with a timeframe
+- Banned phrases auto-rejected
+
+═══ SELF-CHECK BEFORE DELIVERY ═══
+
+☐ Banned phrases anywhere? ☐ Accent used &gt;1× per slide?
+☐ Slide-1 hook and slide-7 CTA in same voice register?
+☐ Sentence rhythm matches my voice rules?
+☐ Slide 1 hook promises what slide 7 delivers?
+☐ Any AI tells (gradient, generic illustration, em dash)?
+
+═══ AFTER DELIVERY ═══
+
+Tell me which 2 slides are weakest, offer to remix.
+Suggest 3 follow-up topics for this series.</pre>
+          </div>
+          <div class="step-expected">
+            <strong>What you should see</strong>
+            7 slides rendered on canvas at 1080×1350 each. Cover, 5 lessons, soft CTA. All in your brand. About 90 seconds.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 03 — WINNING AD -->
+      <div class="step-card">
+        <div class="step-card-number">03</div>
+        <div class="step-card-body">
+          <h3 class="step-card-title">Reverse-engineer a winning ad</h3>
+          <p class="step-card-text">Drop a screenshot of an ad you admire (Stripe, Hormozi, Linear, Notion) into the chat. Then paste this prompt. Claude decodes WHY it works, then ships 3 variations in your brand.</p>
+          <div class="step-prompt">
+            <div class="step-prompt-header">
+              <span class="step-prompt-label">Prompt 03 — Winning Ad to My Version</span>
+              <button class="copy-prompt-btn" type="button">Copy</button>
+            </div>
+            <pre class="step-prompt-body">═══ INPUT ═══
+
+<span class="replace-marker">[ATTACH IMAGE OF THE AD]</span>
+
+Industry context: <span class="replace-marker">[my industry]</span>
+Why I think this works: <span class="replace-marker">[one sentence — your hypothesis]</span>
+
+═══ STEP 1: FORENSIC DECODE ═══
+
+Critique the ad like a designer. Tell me in chat (don't render yet):
+
+Composition — Where does the eye land 1st, 2nd, 3rd? Negative space ratio?
+Copy — Hook structure? Headline word count? CTA explicit or implicit?
+Visual signature — Color hierarchy? Type contrast? The ONE move that makes this premium / trustworthy?
+Emotional beat — What feeling lands? What objection does it preempt? Anti-audience?
+
+═══ STEP 2: BRAND TRANSLATION ═══
+
+Now render my version on canvas. Same skeleton, my brand.
+
+Take from the original: composition, copy structure, emotional beat, negative space.
+Replace from my brand: colors, fonts, voice, imagery, accent placement.
+
+═══ STEP 3: VARIATIONS ═══
+
+Render 3 variations side by side, original's exact dimensions:
+  V1. FAITHFUL — closest mapping
+  V2. CONFIDENT — push my brand's signature gesture harder
+  V3. RISKY — invert one decision (dense → sparse). Brave version.
+
+═══ STEP 4: VERDICT ═══
+
+After rendering, answer:
+1. Which variation would YOU ship and why?
+2. Predict A/B test ranking (original vs my V1-V3).
+3. What did the original do that I should NOT copy?</pre>
+          </div>
+          <div class="step-expected">
+            <strong>What you should see</strong>
+            A short forensic decode in chat, then 3 variations rendered side by side on canvas. Each one in your brand, using the original's structure.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 04 — PINTEREST -->
+      <div class="step-card">
+        <div class="step-card-number">04</div>
+        <div class="step-card-body">
+          <h3 class="step-card-title">Borrow a Pinterest layout (never the colors)</h3>
+          <p class="step-card-text">Drop a Pinterest image (magazine cover, A24 poster, album art). Pick something <em>opposite</em> to your brand for maximum effect. Paste this prompt. Get 2 variations in your brand using the reference's structure.</p>
+          <div class="step-prompt">
+            <div class="step-prompt-header">
+              <span class="step-prompt-label">Prompt 04 — Pinterest to My Layout</span>
+              <button class="copy-prompt-btn" type="button">Copy</button>
+            </div>
+            <pre class="step-prompt-body">═══ INPUT ═══
+
+<span class="replace-marker">[ATTACH PINTEREST IMAGE]</span>
+
+What I want to build: <span class="replace-marker">[carousel cover / image post / one-pager / banner / pitch slide]</span>
+
+═══ EXTRACTION TARGETS ═══
+
+In chat first, tell me:
+
+The grid — asymmetric / symmetric / modular? Alignment lines? Columns?
+The focal point — what pulls the eye? How is it framed? Focal-area ratio?
+Typography hierarchy — hero/body size ratio? Number of distinct styles?
+Density rhythm — crowded → empty? Where does the eye rest?
+
+═══ APPLY TO MY BRAND ═══
+
+Render the artifact in MY brand. Structure borrowed, everything else mine.
+
+Forbidden imports: colors, fonts, imagery, mood (use my brand's).
+Required from reference: grid, focal-point framing, negative space ratio, type hierarchy ratio.
+
+═══ OUTPUT ═══
+
+Render two variations side by side:
+  V1. FAITHFUL — structure 1:1, brand applied
+  V2. LOOSENED — structure simplified by 20%, more breathing room
+
+═══ THE TASTE TEST ═══
+
+Before rendering, ask yourself: "If I stripped colors and fonts, would a designer see the same skeleton in my V1 and the reference's wireframe?"
+
+If yes → nailed it. If no → redo.</pre>
+          </div>
+          <div class="step-expected">
+            <strong>What you should see</strong>
+            A short structural breakdown in chat, then 2 variations rendered on canvas. Both in your brand, both using the Pinterest reference's composition.
+          </div>
+          <div class="step-tip">
+            <strong>Reference picks that always work:</strong> Wallpaper, Kinfolk, or Cereal magazine covers. A24 movie posters. Frank Ocean's Blonde album cover. Vintage Müller-Brockmann Swiss design posters.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 05 — ITERATE -->
+      <div class="step-card">
+        <div class="step-card-number">05</div>
+        <div class="step-card-body">
+          <h3 class="step-card-title">Iterate to refine (don't restart)</h3>
+          <p class="step-card-text">After any artifact, when 80% is right and 20% needs adjusting. Use this prompt in chat — or use Claude Design's inline comments on the canvas. Both work.</p>
+          <div class="step-prompt">
+            <div class="step-prompt-header">
+              <span class="step-prompt-label">Prompt 05 — Iterate to Refine</span>
+              <button class="copy-prompt-btn" type="button">Copy</button>
+            </div>
+            <pre class="step-prompt-body">═══ INPUT ═══
+
+The artifact you just rendered: <span class="replace-marker">[name it]</span>
+
+═══ MY DIRECTION ═══
+
+Want to push:
+  + <span class="replace-marker">[thing to amplify]</span>
+  + <span class="replace-marker">[thing to amplify]</span>
+
+Want to soften:
+  - <span class="replace-marker">[thing to dial back]</span>
+
+Want to try:
+  ? <span class="replace-marker">[experiment, optional]</span>
+
+Keep untouched: <span class="replace-marker">[list anything sacred]</span>
+
+═══ EXECUTION ═══
+
+Step 1: Acknowledge. Repeat back what you're amplifying / softening / trying.
+        If anything is ambiguous, ask ONE question.
+
+Step 2: Render V2 on canvas next to V1 (split view, same canvas size).
+
+Step 3: In chat, give me a 60-word "diff explained" — the specific decisions and why.
+
+═══ DIFF DISCIPLINE ═══
+
+A real iteration changes 3-5 things, not 30. If you're rebuilding half the artifact,
+you're starting over. Pause and ask if that's what I want.
+
+═══ AFTER ═══
+
+Two questions:
+1. Ship V1, ship V2, or run another iteration?
+2. If we iterate again, what's the smallest next change?</pre>
+          </div>
+          <div class="step-expected">
+            <strong>What you should see</strong>
+            V1 (your previous version) and V2 (the iteration) side by side on canvas. A 60-word diff in chat below.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 06 — EXPORT -->
+      <div class="step-card">
+        <div class="step-card-number">06</div>
+        <div class="step-card-body">
+          <h3 class="step-card-title">Export and ship</h3>
+          <p class="step-card-text">When you're happy, click <strong>Export</strong> in Claude Design. Pick the format that fits your channel:</p>
+          <ul class="step-card-list">
+            <li><strong>PDF</strong> — LinkedIn document carousel, one-pagers, brand decks</li>
+            <li><strong>PPTX</strong> — pitch decks, conference talks</li>
+            <li><strong>HTML</strong> — standalone web pages, landing pages</li>
+            <li><strong>Canva</strong> — hand off to a teammate who lives in Canva</li>
+            <li><strong>Claude Code</strong> — hand off to a developer for production</li>
+            <li><strong>Zip</strong> — archive everything, version-control your assets</li>
+          </ul>
+          <div class="step-expected">
+            <strong>You're done.</strong>
+            You walked in with answers. You walked out with shipped designs in your brand.
+          </div>
+          <div class="step-tip">
+            <strong>For the workshop CTA:</strong> Comment AI on the LinkedIn post and we'll send you everything in one DM — the recording, both prompt handouts, and the next workshop date.
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <div class="status" id="status"></div>
@@ -649,42 +1122,58 @@
         .join('\n') || '- (none ticked yet — pick at least one)';
 
       const prompt = [
-        "I am using the Brand In A Box template (zip attached).",
+        "You are my brand-in-a-box system inside Claude Design.",
         "",
-        "Read SKILL.md and run the brand-in-a-box skill on the intake below.",
+        "I'm pasting my brand intake below. Your job:",
         "",
-        "=== MY INTAKE ===",
+        "1. Extract my voice rules from my writing samples (Q7) — sentence rhythm,",
+        "   pronoun usage, banned phrases, hook style.",
+        "2. Apply the aesthetic family in Q6 — set canvas color, fonts, accent ratio,",
+        "   corner radius, border style.",
+        "3. Lock these as the design system for every visual we make in this conversation.",
         "",
-        "## 1 - The brand",
+        "═══ HARD RULES (every artifact, no exceptions) ═══",
         "",
+        "- The accent color appears at most ONCE per visible frame, on a verb,",
+        "  a number, or a CTA. Never on body paragraphs.",
+        "- No em dashes",
+        "- No hashtags",
+        "- No emojis as decorative elements",
+        "- No SaaS gradients, no glassmorphism, no backdrop blur",
+        "- No lorem ipsum — use real phrases from my positioning",
+        "- Match the voice rhythm from my samples (count words if needed)",
+        "",
+        "═══ MY INTAKE ═══",
+        "",
+        "## 1 · The brand",
         "1. Business name: " + (v('biz_name') || '____'),
         "2. One-line description: " + (v('description') || '____'),
         "3. Who I serve: " + (v('audience') || '____'),
         "",
-        "## 2 - The transformation",
-        "",
+        "## 2 · The transformation",
         "4. The pain I solve: " + (v('pain') || '____'),
         "5. The promise: " + (v('promise') || '____'),
         "",
-        "## 3 - How it should look and sound",
-        "",
+        "## 3 · How it should look and sound",
         "6. Aesthetic family: " + (v('family') || '____'),
         "",
         "7. Three writing samples:",
         "```",
-        v('samples') || '[no samples provided - output quality will drop]',
+        v('samples') || '[no samples provided — output quality will drop]',
         "```",
         "",
         "8. Formats I ship:",
         formats,
         "",
         "9. Live website URL: " + (v('website') || '(none)'),
-        "10. Accent colour: " + (v('accent') || '(default - pick from family)'),
+        "10. Accent colour: " + (v('accent') || '(default — pick from family)'),
         "",
-        "=== END INTAKE ===",
+        "═══ NOW ═══",
         "",
-        "Generate the full output folder per the SKILL's instructions.",
-        "Show me the folder path when done."
+        "Confirm in one line: \"Brand loaded. [family] family. Accent [color]. Ready.\"",
+        "",
+        "If my intake has conflicts (accent vs family palette mismatch, family vs sample tone),",
+        "pause and offer 2-3 directions before proceeding."
       ].join('\n');
 
       const out = document.getElementById('output-text');
@@ -839,6 +1328,32 @@
     });
 
     updatePreview();
+
+    /* ============ Copy-prompt buttons (step walkthrough) ============ */
+    document.querySelectorAll('.copy-prompt-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('.step-prompt');
+        if (!card) return;
+        const body = card.querySelector('.step-prompt-body');
+        if (!body) return;
+        // Get text content (strips the highlight spans, keeps placeholder text readable)
+        const text = body.textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          showStatus('Prompt copied');
+        } catch {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.top = '-1000px';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); showStatus('Prompt copied'); }
+          catch { showStatus('Copy failed — select manually'); }
+          document.body.removeChild(ta);
+        }
+      });
+    });
   </script>
 </body>
 </html>
