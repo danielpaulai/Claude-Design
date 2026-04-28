@@ -559,41 +559,52 @@ NO other elements. The dark background and the inverted color is the visual hit.
 
 ---
 
-## Slide 12 — DESIGN.md screenshot placeholder
+## Slide 12 — Brand Presets splash (the wow moment)
 
-**Type:** Screenshot slide
-**Time on slide:** ~60 seconds
-**Audience purpose:** Show the bridge file. Make it concrete.
+**Type:** Splash slide (light)
+**Time on slide:** ~30 seconds
+**Audience purpose:** Set up the live brand-preset demo. The audience sees brand recognition turn into a configuration.
+
+**Why this slide replaced the old DESIGN.md screenshot:** the workflow no longer requires a separate Claude Code step or DESIGN.md upload. The form's prompt is self-contained — paste into Claude Design and the brand is loaded. This slide instead celebrates the brand-presets feature, which is the new wow moment of the setup demo.
 
 **Genspark prompt:**
 
 ```
-Create an editorial-minimal screenshot slide.
+Create an editorial-minimal splash slide on a LIGHT background (off-white).
 
-LAYOUT:
-- Caption at top
-- Large screenshot area centered below
+BACKGROUND: off-white #f7f7f8
+
+LAYOUT: centered horizontally, vertically centered.
 
 ELEMENTS:
 
-1. Caption (top-left, 80px from edges):
-   - Eyebrow: "THE BRIDGE"
-     - JetBrains Mono 11px, red, uppercase, letter-spacing 0.14em
-   - Title (16px below eyebrow): "DESIGN.md — section 9: Agent Prompt Guide"
-     - Rethink Sans semibold 600, 32px, near-black
+1. Eyebrow (centered, top of column):
+   - "// 36 BRAND PRESETS"
+   - JetBrains Mono 11px, red #e90d41, uppercase, letter-spacing 0.18em
 
-2. Below caption (32px gap): a single screenshot placeholder
-   - Empty image area, ~70% of slide width, centered
-   - Background: charcoal #0a0a0c (looks like a code editor)
-   - Border: 1px solid gray-100
-   - Aspect ratio: roughly 16:9 or 4:3
+2. Hero (40px below), four stacked lines, centered:
+   - Line 1: "Linear."
+     - Rethink Sans bold 800, size 84px, color near-black, line-height 1.0
+   - Line 2 (8px gap): "Stripe."
+     - same style
+   - Line 3 (8px gap): "Apple."
+     - same style
+   - Line 4 (8px gap): "Nike." — with "Nike." in red #e90d41
+     - same style
 
-PURPOSE: I will drop a screenshot of my DESIGN.md file (section 9 visible) into this placeholder.
+3. Subtitle (40px below the four names):
+   - "Click any. The form fills. The brand loads."
+   - Rethink Sans semibold 600, size 28px, color: gray-500 #6b7075
+   - Centered
 
-BACKGROUND: off-white #f7f7f8
+4. Tiny footer (centered, at bottom of slide, 32px from bottom):
+   - "+ 32 more"
+   - JetBrains Mono 11px, gray-500, uppercase, letter-spacing 0.14em
+
+NO icons, NO decorations. The four brand names ARE the design.
 ```
 
-**After Genspark generates:** Drop a screenshot of `DESIGN.md` from your editor (showing section 9 — Agent Prompt Guide) into the placeholder.
+**On stage:** This slide cues you to click 4 brand presets in succession on the live form. Linear, Stripe, Apple, Nike. The audience watches the live preview transform each time.
 
 ---
 

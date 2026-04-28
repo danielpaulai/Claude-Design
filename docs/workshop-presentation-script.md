@@ -47,28 +47,28 @@ These are the 4 screenshots you shared, mapped to where they go in the presentat
       │
 8:00  ─┼─ THE FRAME + THE PROMISE          (4 min)
       │
-12:00 ─┼─ DEMO 1: Generate the Brand       (10 min)
-      │   - Form → Claude Code → folder
+12:00 ─┼─ DEMO 1: Form → Brand in 90 sec   (8 min)
+      │   - Form, brand presets, paste into Claude Design
+      │   - "Brand loaded. Ready."  (no Claude Code, no zip)
       │
-22:00 ─┼─ DEMO 2: Apply in Claude Design   (4 min)
-      │   - Upload DESIGN.md, Master Check
+20:00 ─┼─ DEMO 2: Topic → Carousel         (6 min)
       │
-26:00 ─┼─ DEMO 3: Topic → Carousel         (6 min)
+26:00 ─┼─ DEMO 3: Winning Ad → My Version  (6 min)
       │
-32:00 ─┼─ DEMO 4: Winning Ad → My Version  (6 min)
+32:00 ─┼─ DEMO 4: Pinterest → My Layout    (5 min)
       │
-38:00 ─┼─ DEMO 5: Pinterest → My Layout    (5 min)
+37:00 ─┼─ DEMO 5: Iterate → Refine         (3 min)
       │
-43:00 ─┼─ DEMO 6: Iterate → Refine         (3 min)
+40:00 ─┼─ THEIR TURN                       (15 min — longer now)
       │
-46:00 ─┼─ THEIR TURN                       (10 min)
-      │
-56:00 ─┼─ TAKE-HOME + CTA                  (3 min)
+55:00 ─┼─ TAKE-HOME + CTA                  (4 min)
       │
 59:00 ─┴─ Buffer                           (1 min)
 ```
 
 The energy rule: never go more than 7 minutes without an audience action. A nod, a hand up, a partner-share, a comment.
+
+**What changed from earlier versions:** the old setup demo had two blocks (Generate the Brand in Claude Code, then Apply in Claude Design). The system now does it in one paste — the form's prompt is self-contained for Claude Design. That gained ~8 minutes which goes into a longer Their Turn block.
 
 ---
 
@@ -299,9 +299,9 @@ Code of Honor for the next 60 minutes:
 
 ---
 
-## Block 3 — DEMO 1: Generate the Brand (12:00 – 22:00)
+## Block 3 — DEMO 1: Form → Brand Loaded (12:00 – 20:00)
 
-**The first big live moment. Slow down. Let the audience watch.**
+**The first big live moment. Form, brand presets, paste into Claude Design. ONE block.**
 
 ### Slide 11 — Live demo splash (0:15)
 
@@ -309,100 +309,87 @@ Code of Honor for the next 60 minutes:
 ```
 LIVE DEMO 01
 
-Generate a brand
-in 90 seconds.
+From form to
+brand loaded.
+8 minutes.
 ```
 
 **Stage action:** Switch to live screen sharing. Open the form.
 
 ---
 
-### Stage block — The form, fill live (4:00)
+### Stage block A — The form + brand presets (4:00)
 
 **No slide. Live screen.** Form at https://claude-design-beginners.vercel.app/
 
 **Stage actions:**
 1. Open the live form on screen
-2. Use the **Pep & Ginger** content from `intake/INTAKE-PEP-AND-GINGER.md` (have it open in another tab)
-3. Type each answer, slow enough that the audience watches the live preview update on the right
-4. **At question 6, switch the family dropdown 3 times** — Editorial Minimal → Cinematic Dark → Warm Editorial → settle on Playful Color. Watch the preview transform live.
+2. Type the first 5 answers using **Pep & Ginger** content from `intake/INTAKE-PEP-AND-GINGER.md`
+3. **Scroll to Section 3.** Show the 36-brand presets grid.
+4. **Click 4 different brands in succession** — Linear → Stripe → Apple → Nike → finally Pep & Ginger's chosen brand (or stay on a real example for the demo). Watch the live preview transform each time.
+5. Settle on the brand that fits Pep & Ginger.
 
-**Speaker notes (during fill):**
+**Speaker notes (during fill + brand-preset demo):**
 > "Watch the right side. As I type, my brand emerges."
 
-[After business name fills, eyebrow updates.]
+[Type business name + description. Eyebrow + hero update.]
 
-> "The eyebrow updates. Now the description — the hero updates. Now the family — watch."
+> "Now scroll to Section 3. Look at this. 36 popular brands. Linear, Stripe, Apple, Nike, NVIDIA, A24. Click any."
 
-[Switch family 3 times.]
+[Click Linear. Preview transforms purple + sans.]
 
-> "Same content. Three different brands. The system is doing the work I couldn't do for myself."
+> "Linear."
 
-[Settle on Playful Color.]
+[Click Stripe.]
 
-> "Now I click Generate Claude Prompt. Copy."
+> "Stripe."
 
-[Click. Status pill flashes.]
+[Click Apple.]
+
+> "Apple."
+
+[Click Nike.]
+
+> "Nike."
+
+[Pause. Audience laughs / gasps.]
+
+> "Each one fills in the family AND injects that brand's actual DNA into your prompt — not just the color. Linear's signature is 'surgical density, calm purple, hairline borders.' Nike's is 'just do it directness, champion register.' Different brands, different prompts, in one click."
+
+> "I'll settle on the family that fits Pep & Ginger."
+
+[Click whichever fits — for Pep & Ginger that's Playful Color, maybe Spotify or Duolingo as the preset.]
 
 ---
 
-### Stage block — Claude Code generates the brand (4:00)
+### Stage block B — Generate prompt + paste into Claude Design (4:00)
 
 **Stage actions:**
-1. Switch to Claude Code
-2. Paste the prompt
-3. **Talk while it generates**
-
-**Speaker notes (during generation):**
-> "While Claude works, here's what's happening. The form told Claude to read SKILL.md. The SKILL is the agent that turns 10 answers into 13 files."
-
-> "It infers your voice rules from the writing samples. It picks fonts based on the family. It writes anti-slop rules. It generates a tokens.json. It builds a DESIGN.md Claude Design can read."
-
-[Folder appears.]
-
-> "Done. Look at this folder. brand/, DESIGN.md, SKILL.md, samples/. This is what you walk out with."
-
----
-
-### Slide 12 — Show DESIGN.md briefly (1:00)
-
-**Visual:** Screenshot/preview of a DESIGN.md file. Highlight section 9.
-
-**Stage action:**
-- Open `DESIGN.md` in your editor
-- Scroll to Section 9 (Agent Prompt Guide)
-- Read 2-3 lines aloud
+1. Click **Generate Claude prompt**. Click **Copy**.
+2. Switch tabs to https://claude.ai/design (already open)
+3. New project. Paste prompt into chat.
+4. Wait for response.
 
 **Speaker notes:**
-> "This is the bridge. Section 9 — Agent Prompt Guide. This is where the SKILL writes instructions for Claude Design. Now we drop this into claude.ai/design."
+> "Generate. Copy."
+
+[Click Generate, click Copy. Status pill flashes.]
+
+> "Now I open Claude Design. New project. Paste."
+
+[Switch tab. Paste. Send.]
+
+> "Watch the response."
+
+[Wait ~5-10 sec.]
+
+> "There it is. *'Brand loaded. Playful Color family. Accent ff5e3a. Ready.'* That's our green light. Every prompt from here is on-brand."
+
+> "No Claude Code. No zip download. No file uploads. One paste. One tab. Ready."
 
 ---
 
-## Block 4 — DEMO 2: Apply in Claude Design (22:00 – 26:00)
-
-### Stage block — Upload + Master Check (4:00)
-
-**Stage actions:**
-1. Open https://claude.ai/design
-2. New project
-3. Add assets → upload DESIGN.md
-4. Paste **Prompt 01: The Master Check** (from your handout — Claude Design edition)
-5. Wait for the 4-line confirmation
-
-**Speaker notes:**
-> "claude.ai/design. New project. Add assets. Upload my DESIGN.md."
-
-[Upload.]
-
-> "Now Claude Design knows my brand. Every prompt from here is on-brand. Watch."
-
-[Paste Master Check.]
-
-> "Look — accent #ff5e3a, Outfit, Inter, brand description. Loaded. Now we make things."
-
----
-
-## Block 5 — DEMO 3: Topic → Carousel (26:00 – 32:00)
+## Block 4 — DEMO 2: Topic → Carousel (20:00 – 26:00)
 
 ### Slide 13 — Demo splash (0:15)
 
@@ -436,7 +423,7 @@ Topic to Carousel.
 
 ---
 
-## Block 6 — DEMO 4: Winning Ad → My Version (32:00 – 38:00)
+## Block 5 — DEMO 3: Winning Ad → My Version (26:00 – 32:00)
 
 **This is the moat demo. Reverse-engineering competitor research is what converts the room.**
 
@@ -475,7 +462,7 @@ the win.
 
 ---
 
-## Block 7 — DEMO 5: Pinterest → My Layout (38:00 – 43:00)
+## Block 6 — DEMO 4: Pinterest → My Layout (32:00 – 37:00)
 
 ### Slide 15 — Demo splash (0:15)
 
@@ -512,7 +499,7 @@ Never colors.
 
 ---
 
-## Block 8 — DEMO 6: Iterate → Refine (43:00 – 46:00)
+## Block 7 — DEMO 5: Iterate → Refine (37:00 – 40:00)
 
 ### Stage block — Iterate live (3:00)
 
@@ -535,9 +522,9 @@ Never colors.
 
 ---
 
-## Block 9 — Their Turn (46:00 – 56:00)
+## Block 8 — Their Turn (40:00 – 55:00)
 
-**The longest interactive block. Energy peaks here. They're DOING it.**
+**The longest interactive block. Energy peaks here. They're DOING it. Now 15 minutes (was 10) thanks to the simpler setup demo.**
 
 ### Slide 16 — Now your turn (1:00)
 
@@ -548,8 +535,8 @@ Never colors.
 NOW YOU.
 
 Open the form on your laptop.
-Fill the first 5 questions.
-3 minutes.
+Fill it. Click a brand preset.
+4 minutes.
 ```
 
 **Speaker notes:**
@@ -557,41 +544,44 @@ Fill the first 5 questions.
 
 [Wait. Walk the room.]
 
-> "Fill questions 1 through 5. Don't worry about the writing samples yet. 3 minutes. Go."
+> "Fill the answers. When you get to Section 3, click a brand. Linear, Stripe, Apple, Nike — whichever fits your business closest. 4 minutes. Go."
 
 [Set timer on screen.]
 
 ---
 
-### Stage block — Generate live with one volunteer (9:00)
+### Stage block — Generate live with one volunteer (14:00)
 
 **Stage actions:**
 1. Pick the volunteer who looks most ready
-2. Pull up their answers
-3. Generate the prompt, paste into Claude Code, watch the brand generate
-4. Drop DESIGN.md into Claude Design, run Master Check
+2. Pull up their filled form on screen
+3. Click Generate, click Copy, paste into Claude Design
+4. Wait for "Brand loaded. Ready."
 5. Run Prompt 02 (Carousel) with a topic THEY pick
+6. (If time allows) Run Prompt 03 (Winning Ad) or Prompt 05 (Iterate) on their carousel
 
 **Speaker notes:**
 > "Who finished? Hand up."
 
-[Pick volunteer. Use their data with permission.]
+[Pick volunteer. Confirm permission to use their data.]
 
-> "[Name], your screen. Let's generate live."
+> "[Name], your screen. Let's go live."
 
-[Run the flow.]
+[Run the flow: copy prompt → paste into Claude Design → "Brand loaded."]
 
-> "[Name], pick a carousel topic. One sentence."
+> "Loaded. [Name], pick a carousel topic. One sentence."
 
-[Run carousel.]
+[Run carousel. Watch render on canvas.]
 
-> "[Name], that's a 7-slide carousel about [topic] in your brand. You walked in with answers. You walked out with a system."
+> "[Name], that's a 7-slide carousel about [topic] in YOUR brand. You walked in with answers. You walked out with a system."
 
 [Applause moment.]
 
+[If time: take a second volunteer, or iterate on the carousel.]
+
 ---
 
-## Block 10 — Take-Home + CTA (56:00 – 59:00)
+## Block 9 — Take-Home + CTA (55:00 – 59:00)
 
 ### Slide 17 — Everything you have access to (1:30)
 
@@ -803,19 +793,26 @@ TIMING                                  URLS
 ─────                                   ────
 00:00  Designer story (8m)              claude-design-beginners.vercel.app
 08:00  Frame + Promise (4m)             claude.ai/design
-12:00  DEMO 1: Generate brand (10m)     github.com/danielpaulai/Claude-Design
-22:00  DEMO 2: Apply in CD (4m)
-26:00  DEMO 3: Carousel (6m)
-32:00  DEMO 4: Winning ad (6m)          BACKUPS ON DESKTOP
-38:00  DEMO 5: Pinterest (5m)           ─────
-43:00  DEMO 6: Iterate (3m)             - hormozi-thumbnail.png
-46:00  THEIR TURN (10m)                 - stripe-hero.png
-56:00  Take-home + CTA (3m)             - a24-poster.png
-59:00  Buffer (1m)                      - wallpaper-cover.png
+12:00  DEMO 1: Form → Brand loaded (8m) github.com/danielpaulai/Claude-Design
+20:00  DEMO 2: Carousel (6m)
+26:00  DEMO 3: Winning ad (6m)
+32:00  DEMO 4: Pinterest (5m)           BACKUPS ON DESKTOP
+37:00  DEMO 5: Iterate (3m)             ─────
+40:00  THEIR TURN (15m)                 - hormozi-thumbnail.png
+55:00  Take-home + CTA (4m)             - stripe-hero.png
+59:00  Buffer (1m)                      - a24-poster.png
+                                        - wallpaper-cover.png
                                         - pre-rendered-demos/
 
 DEMO BRAND: Pep & Ginger
 File: intake/INTAKE-PEP-AND-GINGER.md
+
+KEY DEMO MOMENT (Block 3, ~min 14)
+────
+Click 4 brand presets in succession on stage:
+  Linear → Stripe → Apple → Nike → settle.
+Each click = preview transforms instantly.
+This is the "wait, what?" moment.
 
 ANCHOR PHRASES (repeat 3× through session)
 ────
@@ -828,8 +825,10 @@ LINE CALLS
 Min  3: "Anyone else been there?" — wait for nods
 Min  4: HOLD 15 seconds of silence on slide 6 (the variations)
 Min 11: "Say with me: 'I haven't yet.'"
+Min 14: BRAND PRESETS DEMO — click 4 brands fast
+Min 18: "Brand loaded. Ready." — that's the green light
 Min 35: Stand-up break if energy dips
-Min 55: "[Name], that's your brand." — applause moment
+Min 50: "[Name], that's your brand." — applause moment
 
 CTA: Comment AI for the kit + both handouts + recording
 
