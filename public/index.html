@@ -427,6 +427,134 @@
       .brand-presets-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
+    /* ============ Hero video block ============ */
+    .hero-video {
+      max-width: 1120px;
+      margin: 24px auto 0;
+      padding: 0 24px;
+    }
+    .hero-video-frame {
+      position: relative;
+      background: var(--color-near-black);
+      border: 2px solid var(--color-near-black);
+      overflow: hidden;
+    }
+    .hero-video-frame video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .hero-video-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: var(--color-near-black);
+      color: var(--color-silver);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero-video-caption .pulse {
+      width: 8px; height: 8px;
+      border-radius: 9999px;
+      background: var(--color-red);
+      display: inline-block;
+      margin-right: 8px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* ============ Asset bar (downloads + github) ============ */
+    .asset-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .asset-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--color-white);
+      color: var(--color-near-black);
+      border: 1px solid var(--color-near-black);
+      border-radius: 9999px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 13px;
+      text-decoration: none;
+      transition: all 120ms;
+    }
+    .asset-btn:hover {
+      background: var(--color-near-black);
+      color: var(--color-white);
+    }
+    .asset-btn.primary {
+      background: var(--color-red);
+      color: var(--color-white);
+      border-color: var(--color-red);
+    }
+    .asset-btn.primary:hover {
+      background: var(--color-near-black);
+      border-color: var(--color-near-black);
+    }
+    .asset-btn .arrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    /* ============ Footer ============ */
+    .site-footer {
+      max-width: 1120px;
+      margin: 96px auto 0;
+      padding: 32px 24px 64px;
+      border-top: 2px solid var(--color-near-black);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      font-family: var(--font-body);
+    }
+    .site-footer-left h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+      margin: 0 0 8px;
+    }
+    .site-footer-left p {
+      font-size: 14px;
+      color: var(--color-gray-500);
+      margin: 0;
+      max-width: 480px;
+      line-height: 1.55;
+    }
+    .site-footer-right {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-gray-500);
+      text-align: right;
+      line-height: 1.7;
+    }
+    .site-footer-right a {
+      color: var(--color-near-black);
+      text-decoration: none;
+      border-bottom: 1px solid var(--color-near-black);
+    }
+    .site-footer-right a:hover { color: var(--color-red); border-color: var(--color-red); }
+    .site-footer-right .dot { color: var(--color-red); margin: 0 4px; }
+
+    @media (max-width: 700px) {
+      .site-footer { grid-template-columns: 1fr; }
+      .site-footer-right { text-align: left; }
+    }
+
     .header { margin-bottom: 56px; }
     .eyebrow {
       display: inline-block;
@@ -680,15 +808,35 @@
   </style>
 </head>
 <body>
+  <!-- Hero video — autoplay, muted, loop -->
+  <div class="hero-video">
+    <div class="hero-video-frame">
+      <video autoplay loop muted playsinline preload="metadata" poster="explainer-preview.gif">
+        <source src="explainer.mp4" type="video/mp4">
+      </video>
+      <div class="hero-video-caption">
+        <span><span class="pulse"></span>// 60-second explainer · what is Claude Design</span>
+        <span>Built with Claude</span>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <header class="header">
       <span class="eyebrow">Workshop intake</span>
       <h1>Brand in a box.</h1>
-      <p class="lede">Answer 10 questions. Generate the prompt. Drop it into Claude with the template zip. Walk out with a working brand design system.</p>
+      <p class="lede">Answer 10 questions. Generate the prompt. Drop it into Claude Design. Walk out with a working brand design system.</p>
       <div class="meta">
         <span><strong>10</strong> questions</span>
         <span><strong>4</strong> minutes fast</span>
         <span><strong>Auto-saves</strong> as you type</span>
+      </div>
+      <div class="asset-bar">
+        <a class="asset-btn primary" href="brand-in-a-box.zip" download><span class="arrow">↓</span> Download the kit</a>
+        <a class="asset-btn" href="handout-claude-design.pdf" target="_blank"><span class="arrow">↓</span> 5 prompts (Claude Design)</a>
+        <a class="asset-btn" href="handout-five-prompts.pdf" target="_blank"><span class="arrow">↓</span> 5 prompts (Claude Code)</a>
+        <a class="asset-btn" href="explainer.mp4" target="_blank"><span class="arrow">▶</span> Full video</a>
+        <a class="asset-btn" href="https://github.com/danielpaulai/Claude-Design" target="_blank"><span class="arrow">↗</span> Source on GitHub</a>
       </div>
     </header>
 
@@ -1135,6 +1283,18 @@ Two questions:
     </section>
 
   </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-left">
+      <h3>Brand In A Box.</h3>
+      <p>Built for the <a href="https://purely-personal-workshop.vercel.app/" target="_blank" style="color: var(--color-red); text-decoration: underline;">Build a Business That Runs By Itself</a> workshop. MIT licensed. Take it, fork it, ship it under your own brand.</p>
+    </div>
+    <div class="site-footer-right">
+      Daniel Paul<span class="dot">·</span>Purely Personal<br>
+      <a href="https://github.com/danielpaulai/Claude-Design" target="_blank">github.com/danielpaulai/Claude-Design</a><br>
+      <a href="https://purelypersonal.ai" target="_blank">purelypersonal.ai</a>
+    </div>
+  </footer>
 
   <div class="status" id="status"></div>
 
