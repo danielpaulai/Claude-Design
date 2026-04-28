@@ -1,0 +1,107 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<title>Purely Personal — Cheatsheet UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #222; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  #stage { transform-origin: center center; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+  #toggle {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; background: rgba(0,0,0,.7); padding: 6px; border-radius: 999px; z-index: 10;
+  }
+  #toggle button { background: transparent; color: #fff; border: 0; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    font-family: 'Rethink Sans', sans-serif; font-weight: 700; font-size: 13px; }
+  #toggle button.on { background: #e90d41; }
+</style>
+</head>
+<body>
+<div id="stage" data-screen-label="Cheatsheet"></div>
+<div id="toggle">
+  <button id="btn-process" class="on">Process</button>
+  <button id="btn-list">List</button>
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="CheatsheetFrame.jsx"></script>
+<script type="text/babel" src="StepCard.jsx"></script>
+<script type="text/babel" src="CategoryBand.jsx"></script>
+<script type="text/babel" src="PersonTile.jsx"></script>
+
+<script type="text/babel">
+  function Process() {
+    const steps = [
+      { n:1, t:"Why you run out of ideas by week 3", d:"Content without a goal is theatre. Every post should move a founder one step closer.", o:"A reason to start" },
+      { n:2, t:"Define content goals", d:"Connect the calendar to actual business outcomes.", p:"Define my content goals for 90 days. My business: what I do, who I serve, what I sell.", o:"Goals tied to revenue" },
+      { n:3, t:"Build 5 pillars", d:"Every post falls under one pillar. Authority 30%, Problem 25%, Proof 20%, Offer 15%, Personality 10%.", p:"Build 5 content pillars for my 90-day calendar.", o:"5 pillars + 30 topics" },
+      { n:4, t:"Generate 90 days of ideas", d:"Upload your goals and pillars. Ask Claude to build the full schedule.", p:"Create a 90-day content calendar using my pillars and goals.", o:"Complete posting schedule" },
+      { n:5, t:"Add campaigns on top", d:"Layer launches, workshops, promotions.", o:"Sequences around every key date" },
+      { n:6, t:"Weekly production workflow", d:"Planning day. Writing day. Scheduling day. Three sessions. Two hours each.", o:"Sustainable rhythm" },
+      { n:7, t:"Test with Week 1", d:"Before committing to 90 days, validate that the calendar actually works.", o:"Green light to ship" },
+    ];
+    return (
+      <CheatsheetFrame
+        title="How to Build a 90-Day Content Calendar in 120 Minutes Using AI."
+        accent="90-Day"
+        subtitle="The complete system to plan 90 days without ever running out of ideas."
+      >
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginTop: 8 }}>
+          {steps.map(s => (
+            <StepCard key={s.n} stepNum={s.n} title={s.t} doing={s.d} prompt={s.p} outcome={s.o} />
+          ))}
+        </div>
+      </CheatsheetFrame>
+    );
+  }
+
+  function ListCS() {
+    const bands = [
+      { label: "Foundations", labelColor: "#16a34a", bg: "#e6f4ea",
+        people: ["Adam Biddlecombe","Sairam Sundaresan","Heather Murray","Matt Village","Alie K. Miller"] },
+      { label: "Skills",      labelColor: "#ea580c", bg: "#ffe9d6",
+        people: ["Anna York","Madhav Mistry","Jodie Cook","Nathan Latka","Jérémy Grandillon"] },
+      { label: "News",        labelColor: "#e90d41", bg: "#ffe1e8",
+        people: ["Greg Isenberg","Ruben Hassid","Rowan Cheung","Alex Banks","Axelle Malek"] },
+      { label: "LinkedIn",    labelColor: "#2563eb", bg: "#e4ebfa",
+        people: ["Nader Alnajjar","Charlie Hills","Daniel Paul","Celeste Yamile","Audrey Chia"] },
+    ];
+    let seed = 0;
+    return (
+      <CheatsheetFrame
+        title="Top 20 AI Creators on LinkedIn"
+        accent="AI Creators"
+      >
+        {bands.map(b => (
+          <CategoryBand key={b.label} label={b.label} labelColor={b.labelColor} bg={b.bg}>
+            {b.people.map(p => <PersonTile key={p} name={p} seed={++seed} />)}
+          </CategoryBand>
+        ))}
+      </CheatsheetFrame>
+    );
+  }
+
+  const stage = document.getElementById("stage");
+  const root = ReactDOM.createRoot(stage);
+  let mode = localStorage.getItem("pp_cheatsheet_mode") || "process";
+  function render() {
+    localStorage.setItem("pp_cheatsheet_mode", mode);
+    document.getElementById("btn-process").classList.toggle("on", mode === "process");
+    document.getElementById("btn-list").classList.toggle("on", mode === "list");
+    root.render(mode === "process" ? <Process /> : <ListCS />);
+  }
+  document.getElementById("btn-process").onclick = () => { mode="process"; render(); };
+  document.getElementById("btn-list").onclick   = () => { mode="list"; render(); };
+  render();
+
+  function fit() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const s = Math.min(w / 1080, (h - 80) / 1350) * 0.95;
+    stage.style.transform = `scale(${s})`;
+  }
+  window.addEventListener("resize", fit); fit();
+</script>
+</body></html>

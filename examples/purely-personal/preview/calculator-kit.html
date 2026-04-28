@@ -1,0 +1,559 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>PP — Calculator construction kit</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  :root {
+    --red: #e90d41;
+    --ink: #0a0a0a;
+    --paper: #f7f7f8;
+  }
+  html, body { margin:0; padding:0; background: var(--paper); color: var(--ink);
+               font-family: 'Rethink Sans', sans-serif; }
+  body { display:grid; grid-template-columns: 1fr 420px; min-height: 100vh; gap:0; }
+  main { display:grid; place-items:center; padding: 40px; }
+  aside {
+    background:#fff;
+    border-left:1px solid rgba(10,10,10,0.08);
+    padding: 28px 28px 60px;
+    overflow-y:auto; max-height:100vh;
+  }
+  h1 { font-size:28px; font-weight:800; letter-spacing:-0.03em; margin:0 0 6px; }
+  .lede { color: #6b6b70; font-size:13px; margin: 0 0 22px; }
+  .group { margin-bottom: 22px; }
+  .g-title {
+    font-size:10px; font-weight:800; letter-spacing:0.2em; text-transform:uppercase;
+    color: var(--red); margin: 0 0 10px; padding-bottom:6px;
+    border-bottom: 1px solid rgba(10,10,10,0.06);
+  }
+  .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:14px; }
+  .label { font-size:13px; font-weight:600; color:#2a2a2a; }
+  .label small { color:#8a8a8f; font-weight:500; margin-left:6px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip {
+    cursor:pointer; font-family:inherit; font-size:12px; font-weight:600;
+    border:1px solid rgba(10,10,10,0.1); background:#fff; color:#2a2a2a;
+    border-radius:999px; padding:6px 12px;
+  }
+  .chip[data-active="1"] { background: var(--ink); color:#fff; border-color: var(--ink); }
+  .swatches { display:flex; gap:6px; }
+  .sw {
+    width:28px; height:28px; border-radius:50%; cursor:pointer;
+    border: 2px solid transparent; box-sizing:border-box;
+  }
+  .sw[data-active="1"] { border-color: var(--ink); }
+  input[type=range] { width: 160px; }
+  input[type=text] {
+    font-family:inherit; font-size:13px; padding:6px 10px;
+    border:1px solid rgba(10,10,10,0.12); border-radius:6px; width:140px;
+  }
+  .reset {
+    margin-top: 10px; font-size:12px; font-weight:700; letter-spacing:0.1em;
+    text-transform:uppercase; color: var(--red); cursor:pointer;
+    background:none; border:none; padding:0;
+  }
+
+  /* ───── Calculator ───── */
+  .calc {
+    width: var(--calc-w, 320px);
+    padding: var(--calc-pad, 20px);
+    background: var(--calc-bg, #fff);
+    color: var(--calc-fg, #0a0a0a);
+    border-radius: var(--calc-radius, 24px);
+    box-shadow: var(--calc-shadow, 0 24px 60px rgba(10,10,10,0.18));
+    font-family: var(--calc-font, 'Rethink Sans'), sans-serif;
+    display:flex; flex-direction: column; gap: var(--calc-gap, 12px);
+    transition: all .25s ease;
+  }
+  .calc[data-frame="outline"] {
+    border: 1.5px solid rgba(10,10,10,0.12);
+    box-shadow: none;
+  }
+  .calc[data-frame="flat"] { box-shadow: none; }
+  .calc[data-frame="paper"] {
+    box-shadow:
+      0 2px 0 rgba(10,10,10,0.04),
+      0 20px 40px rgba(10,10,10,0.08);
+  }
+  .display {
+    font-family: var(--calc-display-font, 'Rethink Sans'), sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-size: var(--calc-display-size, 48px);
+    text-align: var(--calc-display-align, right);
+    padding: var(--calc-display-pad, 18px 10px);
+    color: var(--calc-display-fg, inherit);
+    background: var(--calc-display-bg, transparent);
+    border-radius: var(--calc-display-radius, 12px);
+    min-height: 1em; line-height: 1;
+    border: var(--calc-display-border, none);
+    overflow: hidden;
+    word-break: break-all;
+  }
+  .display .sub {
+    font-size: .36em;
+    font-weight: 600;
+    color: var(--calc-display-sub, rgba(10,10,10,0.4));
+    display: block;
+    margin-bottom: 6px;
+    min-height: 1em;
+  }
+  .keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--calc-key-gap, 10px);
+  }
+  .key {
+    font-family: inherit;
+    font-weight: var(--calc-key-weight, 600);
+    font-size: var(--calc-key-size, 18px);
+    letter-spacing: -0.01em;
+    border: var(--calc-key-border, 1px solid rgba(10,10,10,0.08));
+    cursor: pointer;
+    padding: var(--calc-key-pad, 16px 0);
+    background: var(--calc-key-bg, #f4f4f6);
+    color: var(--calc-key-fg, inherit);
+    border-radius: var(--calc-key-radius, 14px);
+    transition: transform .06s ease, background .15s ease, color .15s ease;
+  }
+  .key:active { transform: translateY(1px) scale(.98); }
+  .key.op {
+    background: var(--calc-op-bg, #0a0a0a);
+    color: var(--calc-op-fg, #fff);
+    border-color: var(--calc-op-bg, #0a0a0a);
+  }
+  .key.mod {
+    background: var(--calc-mod-bg, #e4e4e6);
+    color: var(--calc-mod-fg, inherit);
+  }
+  .key.eq {
+    background: var(--calc-eq-bg, var(--red));
+    color: var(--calc-eq-fg, #fff);
+    border-color: var(--calc-eq-bg, var(--red));
+  }
+  .key.zero { grid-column: span var(--calc-zero-span, 1); }
+  .key:hover { filter: brightness(0.98); }
+
+  /* Frame variations */
+  .calc[data-layout="bars"] .keys { grid-template-columns: repeat(5, 1fr); }
+  .calc[data-layout="compact"] { width: calc(var(--calc-w) - 40px); }
+
+  /* Key shape mods */
+  .calc[data-keyshape="circle"] .key { border-radius: 999px; aspect-ratio:1/1; padding:0; display:grid; place-items:center; }
+  .calc[data-keyshape="square"] .key { border-radius: 4px; aspect-ratio:1/1; padding:0; display:grid; place-items:center; }
+  .calc[data-keyshape="pill"]   .key { border-radius: 999px; }
+
+  /* Tiny brand footer */
+  .foot {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    color: rgba(10,10,10,0.25);
+    margin-top: 4px;
+    text-transform: uppercase;
+    display: var(--calc-foot-display, block);
+  }
+  .calc[data-dark="1"] .foot { color: rgba(255,255,255,0.35); }
+
+  /* Dark mode overrides apply via CSS variables when the calc has data-dark */
+  .calc[data-dark="1"] {
+    --calc-bg: #0a0a0a; --calc-fg: #f7f7f8;
+    --calc-key-bg: #1a1a1a; --calc-key-fg: #f7f7f8;
+    --calc-key-border: 1px solid rgba(255,255,255,0.08);
+    --calc-mod-bg: #2a2a2a; --calc-mod-fg: #f7f7f8;
+    --calc-op-bg: #f7f7f8; --calc-op-fg: #0a0a0a;
+    --calc-display-sub: rgba(255,255,255,0.45);
+    --calc-display-bg: transparent;
+  }
+
+  /* tiny keyboard hint */
+  .hint { margin-top: 20px; text-align:center; font-size:11px; color:#8a8a8f; }
+</style>
+</head>
+<body>
+
+<main>
+  <div id="calcWrap">
+    <div class="calc" id="calc">
+      <div class="display" id="display">
+        <span class="sub" id="expr">&nbsp;</span>
+        <span id="val">0</span>
+      </div>
+      <div class="keys" id="keys"></div>
+      <div class="foot">Purely · Personal</div>
+    </div>
+    <div class="hint">Use your keyboard · 0–9, + − × ÷, Enter, Esc</div>
+  </div>
+</main>
+
+<aside>
+  <h1>Calculator kit</h1>
+  <div class="lede">A working calculator with a deep bench of layout, color, and typography knobs. Mix and match.</div>
+
+  <div class="group">
+    <div class="g-title">Mode</div>
+    <div class="row">
+      <div class="label">Theme</div>
+      <div class="chips" data-knob="dark">
+        <div class="chip" data-val="0">Light</div>
+        <div class="chip" data-val="1">Dark</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Frame</div>
+      <div class="chips" data-knob="frame">
+        <div class="chip" data-val="shadow">Shadow</div>
+        <div class="chip" data-val="outline">Outline</div>
+        <div class="chip" data-val="paper">Paper</div>
+        <div class="chip" data-val="flat">Flat</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Key shape</div>
+      <div class="chips" data-knob="keyshape">
+        <div class="chip" data-val="rounded">Rounded</div>
+        <div class="chip" data-val="pill">Pill</div>
+        <div class="chip" data-val="circle">Circle</div>
+        <div class="chip" data-val="square">Square</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="g-title">Color accents</div>
+    <div class="row">
+      <div class="label">Equals (=)</div>
+      <div class="swatches" data-knob="eqColor">
+        <div class="sw" data-val="#e90d41" style="background:#e90d41"></div>
+        <div class="sw" data-val="#0a0a0a" style="background:#0a0a0a"></div>
+        <div class="sw" data-val="#ff8c00" style="background:#ff8c00"></div>
+        <div class="sw" data-val="#2b8a3e" style="background:#2b8a3e"></div>
+        <div class="sw" data-val="#1d4ed8" style="background:#1d4ed8"></div>
+        <div class="sw" data-val="#6d28d9" style="background:#6d28d9"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Operator (+−×÷)</div>
+      <div class="swatches" data-knob="opColor">
+        <div class="sw" data-val="#0a0a0a" style="background:#0a0a0a"></div>
+        <div class="sw" data-val="#e90d41" style="background:#e90d41"></div>
+        <div class="sw" data-val="#525252" style="background:#525252"></div>
+        <div class="sw" data-val="#fff"   style="background:#fff; border:1px solid #ddd"></div>
+        <div class="sw" data-val="#1d4ed8" style="background:#1d4ed8"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Body</div>
+      <div class="swatches" data-knob="bgColor">
+        <div class="sw" data-val="#ffffff" style="background:#ffffff; border:1px solid #eee"></div>
+        <div class="sw" data-val="#f7f7f8" style="background:#f7f7f8; border:1px solid #eee"></div>
+        <div class="sw" data-val="#ffe4ea" style="background:#ffe4ea"></div>
+        <div class="sw" data-val="#e8f0ff" style="background:#e8f0ff"></div>
+        <div class="sw" data-val="#e6f7ee" style="background:#e6f7ee"></div>
+        <div class="sw" data-val="#0a0a0a" style="background:#0a0a0a"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="g-title">Proportions</div>
+    <div class="row">
+      <div class="label">Width <small>px</small></div>
+      <input type="range" min="260" max="400" step="4" data-knob="width" id="rWidth">
+    </div>
+    <div class="row">
+      <div class="label">Corner radius</div>
+      <input type="range" min="0" max="40" step="1" data-knob="radius" id="rRadius">
+    </div>
+    <div class="row">
+      <div class="label">Key radius</div>
+      <input type="range" min="0" max="40" step="1" data-knob="keyRadius" id="rKeyRadius">
+    </div>
+    <div class="row">
+      <div class="label">Padding</div>
+      <input type="range" min="8" max="32" step="1" data-knob="padding" id="rPad">
+    </div>
+    <div class="row">
+      <div class="label">Key gap</div>
+      <input type="range" min="4" max="18" step="1" data-knob="gap" id="rGap">
+    </div>
+    <div class="row">
+      <div class="label">Key size</div>
+      <input type="range" min="14" max="28" step="1" data-knob="keySize" id="rKeySize">
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="g-title">Display</div>
+    <div class="row">
+      <div class="label">Display size</div>
+      <input type="range" min="28" max="80" step="2" data-knob="displaySize" id="rDispSize">
+    </div>
+    <div class="row">
+      <div class="label">Alignment</div>
+      <div class="chips" data-knob="displayAlign">
+        <div class="chip" data-val="right">Right</div>
+        <div class="chip" data-val="left">Left</div>
+        <div class="chip" data-val="center">Center</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Inset box</div>
+      <div class="chips" data-knob="displayBox">
+        <div class="chip" data-val="off">Off</div>
+        <div class="chip" data-val="subtle">Subtle</div>
+        <div class="chip" data-val="contrast">Contrast</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="g-title">Type</div>
+    <div class="row">
+      <div class="label">Family</div>
+      <div class="chips" data-knob="font">
+        <div class="chip" data-val="'Rethink Sans', sans-serif">Rethink</div>
+        <div class="chip" data-val="'Inter', sans-serif">Inter</div>
+        <div class="chip" data-val="'Georgia', serif">Serif</div>
+        <div class="chip" data-val="'Menlo', monospace">Mono</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Key weight</div>
+      <div class="chips" data-knob="keyWeight">
+        <div class="chip" data-val="400">Regular</div>
+        <div class="chip" data-val="500">Medium</div>
+        <div class="chip" data-val="600">Semibold</div>
+        <div class="chip" data-val="800">Bold</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="g-title">Layout</div>
+    <div class="row">
+      <div class="label">Zero key</div>
+      <div class="chips" data-knob="zeroSpan">
+        <div class="chip" data-val="1">1 col</div>
+        <div class="chip" data-val="2">2 cols</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">Show footer</div>
+      <div class="chips" data-knob="foot">
+        <div class="chip" data-val="show">Show</div>
+        <div class="chip" data-val="hide">Hide</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset" id="resetBtn">Reset to defaults</button>
+</aside>
+
+<script>
+/* ───────────── Calculator engine ───────────── */
+const DISPLAY = document.getElementById('val');
+const EXPR = document.getElementById('expr');
+const state = { display: '0', expr: '', a: null, op: null, resetNext: false };
+
+function setDisplay(s) {
+  state.display = s;
+  // Trim to fit
+  let t = s;
+  if (t.length > 12) t = (+t).toPrecision(8);
+  DISPLAY.textContent = t;
+  EXPR.innerHTML = state.expr || '&nbsp;';
+}
+
+function inputDigit(d) {
+  if (state.resetNext) { state.display = '0'; state.resetNext = false; }
+  if (d === '.') {
+    if (!state.display.includes('.')) state.display += '.';
+  } else {
+    state.display = state.display === '0' ? d : state.display + d;
+  }
+  setDisplay(state.display);
+}
+
+function setOp(op) {
+  if (state.a !== null && state.op && !state.resetNext) compute(false);
+  state.a = parseFloat(state.display);
+  state.op = op;
+  state.expr = `${state.a} ${op}`;
+  state.resetNext = true;
+  setDisplay(state.display);
+}
+
+function compute(final=true) {
+  if (state.a === null || !state.op) return;
+  const b = parseFloat(state.display);
+  let r = 0;
+  switch (state.op) {
+    case '+': r = state.a + b; break;
+    case '−': r = state.a - b; break;
+    case '×': r = state.a * b; break;
+    case '÷': r = b === 0 ? NaN : state.a / b; break;
+  }
+  state.expr = final ? `${state.a} ${state.op} ${b} =` : `${r} ${state.op}`;
+  state.a = final ? null : r;
+  state.op = final ? null : state.op;
+  state.resetNext = true;
+  setDisplay(isFinite(r) ? String(+r.toFixed(10)) : 'Error');
+}
+
+function clear() { state.display='0'; state.expr=''; state.a=null; state.op=null; state.resetNext=false; setDisplay('0'); }
+function toggleSign() { state.display = String(-parseFloat(state.display)); setDisplay(state.display); }
+function percent() { state.display = String(parseFloat(state.display)/100); setDisplay(state.display); }
+
+/* ───────────── Key layout ───────────── */
+const KEYS = [
+  { t: 'AC', cls: 'mod', onClick: clear },
+  { t: '±',  cls: 'mod', onClick: toggleSign },
+  { t: '%',  cls: 'mod', onClick: percent },
+  { t: '÷',  cls: 'op',  onClick: () => setOp('÷') },
+  { t: '7' }, { t: '8' }, { t: '9' },
+  { t: '×', cls: 'op', onClick: () => setOp('×') },
+  { t: '4' }, { t: '5' }, { t: '6' },
+  { t: '−', cls: 'op', onClick: () => setOp('−') },
+  { t: '1' }, { t: '2' }, { t: '3' },
+  { t: '+', cls: 'op', onClick: () => setOp('+') },
+  { t: '0', cls: 'zero' }, { t: '.' },
+  { t: '=', cls: 'eq', onClick: () => compute(true) },
+];
+
+const KEYS_EL = document.getElementById('keys');
+function renderKeys() {
+  KEYS_EL.innerHTML = '';
+  KEYS.forEach(k => {
+    const b = document.createElement('button');
+    b.className = 'key ' + (k.cls || '');
+    b.textContent = k.t;
+    b.addEventListener('click', () => {
+      if (k.onClick) k.onClick();
+      else if (/[0-9]|\./.test(k.t)) inputDigit(k.t);
+    });
+    KEYS_EL.appendChild(b);
+  });
+}
+renderKeys();
+setDisplay('0');
+
+// Keyboard input
+document.addEventListener('keydown', (e) => {
+  if (/^[0-9.]$/.test(e.key)) inputDigit(e.key);
+  else if (e.key === '+') setOp('+');
+  else if (e.key === '-') setOp('−');
+  else if (e.key === '*') setOp('×');
+  else if (e.key === '/') { e.preventDefault(); setOp('÷'); }
+  else if (e.key === 'Enter' || e.key === '=') compute(true);
+  else if (e.key === 'Escape') clear();
+  else if (e.key === '%') percent();
+});
+
+/* ───────────── Tweaks engine ───────────── */
+const CALC = document.getElementById('calc');
+
+const DEFAULTS = {
+  dark: '0', frame: 'shadow', keyshape: 'rounded',
+  eqColor: '#e90d41', opColor: '#0a0a0a', bgColor: '#ffffff',
+  width: 320, radius: 24, keyRadius: 14, padding: 20, gap: 10, keySize: 18,
+  displaySize: 48, displayAlign: 'right', displayBox: 'off',
+  font: "'Rethink Sans', sans-serif", keyWeight: '600',
+  zeroSpan: '2', foot: 'show',
+};
+let cfg = { ...DEFAULTS };
+
+function apply() {
+  CALC.dataset.dark     = cfg.dark;
+  CALC.dataset.frame    = cfg.frame;
+  CALC.dataset.keyshape = cfg.keyshape;
+  const s = CALC.style;
+  s.setProperty('--calc-w',              cfg.width + 'px');
+  s.setProperty('--calc-radius',         cfg.radius + 'px');
+  s.setProperty('--calc-key-radius',     cfg.keyRadius + 'px');
+  s.setProperty('--calc-pad',            cfg.padding + 'px');
+  s.setProperty('--calc-key-gap',        cfg.gap + 'px');
+  s.setProperty('--calc-key-size',       cfg.keySize + 'px');
+  s.setProperty('--calc-display-size',   cfg.displaySize + 'px');
+  s.setProperty('--calc-display-align',  cfg.displayAlign);
+  s.setProperty('--calc-font',           cfg.font);
+  s.setProperty('--calc-display-font',   cfg.font);
+  s.setProperty('--calc-key-weight',     cfg.keyWeight);
+  s.setProperty('--calc-eq-bg',          cfg.eqColor);
+  s.setProperty('--calc-op-bg',          cfg.opColor);
+  s.setProperty('--calc-op-fg',          cfg.opColor === '#ffffff' || cfg.opColor === '#fff' ? '#0a0a0a' : '#fff');
+  s.setProperty('--calc-bg',             cfg.bgColor);
+  s.setProperty('--calc-zero-span',      cfg.zeroSpan);
+  s.setProperty('--calc-foot-display',   cfg.foot === 'show' ? 'block' : 'none');
+
+  // Display box
+  if (cfg.displayBox === 'subtle') {
+    s.setProperty('--calc-display-bg', 'rgba(10,10,10,0.04)');
+    s.setProperty('--calc-display-border', 'none');
+  } else if (cfg.displayBox === 'contrast') {
+    s.setProperty('--calc-display-bg', cfg.dark === '1' ? '#050505' : '#0a0a0a');
+    s.setProperty('--calc-display-fg', '#fff');
+    s.setProperty('--calc-display-sub', 'rgba(255,255,255,0.45)');
+  } else {
+    s.setProperty('--calc-display-bg', 'transparent');
+    s.removeProperty('--calc-display-fg');
+    s.removeProperty('--calc-display-sub');
+  }
+
+  // Update chip active states
+  document.querySelectorAll('.chips').forEach(grp => {
+    const knob = grp.dataset.knob;
+    grp.querySelectorAll('.chip').forEach(c =>
+      c.dataset.active = String(c.dataset.val) === String(cfg[knob]) ? '1' : '0');
+  });
+  document.querySelectorAll('.swatches').forEach(grp => {
+    const knob = grp.dataset.knob;
+    grp.querySelectorAll('.sw').forEach(sw =>
+      sw.dataset.active = String(sw.dataset.val).toLowerCase() === String(cfg[knob]).toLowerCase() ? '1' : '0');
+  });
+  // Sliders
+  document.querySelectorAll('input[type=range]').forEach(r => {
+    r.value = cfg[r.dataset.knob];
+  });
+}
+
+function bind() {
+  document.querySelectorAll('.chips').forEach(grp => {
+    const knob = grp.dataset.knob;
+    grp.addEventListener('click', (e) => {
+      const c = e.target.closest('.chip');
+      if (!c) return;
+      cfg[knob] = c.dataset.val;
+      apply();
+    });
+  });
+  document.querySelectorAll('.swatches').forEach(grp => {
+    const knob = grp.dataset.knob;
+    grp.addEventListener('click', (e) => {
+      const sw = e.target.closest('.sw');
+      if (!sw) return;
+      cfg[knob] = sw.dataset.val;
+      // Body color also flips text contrast
+      if (knob === 'bgColor') {
+        const dark = sw.dataset.val === '#0a0a0a';
+        cfg.dark = dark ? '1' : '0';
+      }
+      apply();
+    });
+  });
+  document.querySelectorAll('input[type=range]').forEach(r => {
+    r.addEventListener('input', () => {
+      cfg[r.dataset.knob] = +r.value;
+      apply();
+    });
+  });
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    cfg = { ...DEFAULTS };
+    apply();
+  });
+}
+bind();
+apply();
+</script>
+</body></html>

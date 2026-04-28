@@ -1,0 +1,143 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PP — Canvas library</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body { margin:0; padding:0; background:#e8eaec; }
+  .wrap { display:grid; grid-template-columns: 1fr 1fr; gap:2px; padding:2px; background:#d0d4d7; }
+  .cell { position:relative; height:200px; padding:44px 24px 20px; box-sizing:border-box; overflow:hidden; }
+
+  /* 01 — signature paper (default cheatsheet canvas) */
+  .c-paper {
+    background-color:#f7f7f8;
+    background-image:
+      linear-gradient(to right, rgba(10,10,10,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(10,10,10,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color:#0a0a0a;
+  }
+
+  /* 02 — half-white gradient: paper top, off-white dusk toward bottom */
+  .c-half-white {
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(233,13,65,0.06), transparent 60%),
+      linear-gradient(180deg, #ffffff 0%, #f7f7f8 55%, #eaecef 100%);
+    color:#0a0a0a;
+  }
+
+  /* 03 — white with subtle red gradient (editorial, airy) */
+  .c-white-grad {
+    background:
+      radial-gradient(700px 400px at 100% 0%, rgba(233,13,65,0.12), transparent 55%),
+      radial-gradient(500px 300px at 0% 100%, rgba(10,10,10,0.05), transparent 55%),
+      #ffffff;
+    color:#0a0a0a;
+  }
+
+  /* 04 — black with square title tiles (grid of subtle squares) */
+  .c-black-tiles {
+    background-color:#0a0a0a;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px),
+      radial-gradient(800px 400px at 90% -10%, rgba(233,13,65,0.18), transparent 55%);
+    background-size: 80px 80px, 80px 80px, 100% 100%;
+    color:#ffffff;
+  }
+
+  /* 05 — plain black with red gradient (hero dark) */
+  .c-black-grad {
+    background:
+      radial-gradient(900px 520px at 85% -10%, rgba(233,13,65,0.22), transparent 60%),
+      radial-gradient(700px 420px at -10% 110%, rgba(233,13,65,0.12), transparent 55%),
+      linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+    color:#ffffff;
+  }
+
+  /* 06 — ink wash: near-black with soft vignette, no red (editorial neutral) */
+  .c-ink {
+    background:
+      radial-gradient(120% 100% at 50% 0%, #1a1a1a 0%, #0a0a0a 55%, #000000 100%);
+    color:#ffffff;
+  }
+
+  .title {
+    font-family:var(--font-heading); font-weight:800; font-size:30px;
+    letter-spacing:-0.025em; line-height:1.05; margin:0;
+    max-width:85%; text-wrap:balance;
+  }
+  .accent-red {
+    background-image: linear-gradient(135deg, #ff2d5e 0%, #e90d41 55%, #8b0626 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-style: italic;
+  }
+  .sub {
+    font-family:var(--font-body); font-size:12px; line-height:1.45;
+    margin-top:8px; max-width:78%; opacity:.7;
+  }
+  .tag {
+    position:absolute; bottom:12px; right:14px;
+    font-family: ui-monospace, Menlo, monospace; font-size:10px;
+    letter-spacing:0.04em; opacity:.55;
+  }
+  .pill {
+    position:absolute; top:12px; left:14px;
+    font-family:var(--font-heading); font-weight:700; font-size:10px;
+    letter-spacing:0.14em; text-transform:uppercase;
+    padding:4px 8px; border-radius:999px;
+    background:rgba(233,13,65,0.12); color:#e90d41;
+  }
+  .cell.c-black-tiles .pill,
+  .cell.c-black-grad .pill,
+  .cell.c-ink .pill {
+    background:rgba(233,13,65,0.22);
+    color:#ff8099;
+  }
+  .cell.c-paper .sub,
+  .cell.c-half-white .sub,
+  .cell.c-white-grad .sub { color:#3a3d40; opacity:1; }
+</style></head>
+<body>
+<div class="wrap">
+  <div class="cell c-paper">
+    <div class="pill">01 · Paper grid</div>
+    <h3 class="title">The signature <span class="accent-red">paper</span> canvas.</h3>
+    <div class="sub">Off-white with a 1% graph grid. Default for cheatsheets and most carousel body slides.</div>
+    <div class="tag">#f7f7f8 · 32px grid</div>
+  </div>
+
+  <div class="cell c-half-white">
+    <div class="pill">02 · Half-white gradient</div>
+    <h3 class="title">Soft <span class="accent-red">dusk</span> on paper.</h3>
+    <div class="sub">Vertical gradient, white to gray, with a hint of red at top-right. Calm, editorial, high-ticket.</div>
+    <div class="tag">#ffffff → #eaecef</div>
+  </div>
+
+  <div class="cell c-white-grad">
+    <div class="pill">03 · Plain white, red bloom</div>
+    <h3 class="title">Clean white with a <span class="accent-red">bloom</span>.</h3>
+    <div class="sub">Pure white canvas with a soft red corner wash. For minimal statement slides and one-page offers.</div>
+    <div class="tag">#ffffff + red radial</div>
+  </div>
+
+  <div class="cell c-black-tiles">
+    <div class="pill">04 · Black tiles</div>
+    <h3 class="title">Black canvas with <span class="accent-red">tile grid</span>.</h3>
+    <div class="sub">Near-black with an 80px square grid and a red corner wash. Masculine, engineered, premium.</div>
+    <div class="tag">#0a0a0a · 80px grid</div>
+  </div>
+
+  <div class="cell c-black-grad">
+    <div class="pill">05 · Black gradient</div>
+    <h3 class="title">Dark with a <span class="accent-red">red glow</span>.</h3>
+    <div class="sub">Default dark hero canvas. Paired with oversized Rethink Sans for covers and CTA slides.</div>
+    <div class="tag">#0a0a0a + red radial</div>
+  </div>
+
+  <div class="cell c-ink">
+    <div class="pill">06 · Ink wash</div>
+    <h3 class="title">Pure <span class="accent-red">ink</span> vignette.</h3>
+    <div class="sub">Red-free dark canvas. For quote slides or when red accents would compete with imagery.</div>
+    <div class="tag">#0a0a0a radial</div>
+  </div>
+</div>
+</body></html>

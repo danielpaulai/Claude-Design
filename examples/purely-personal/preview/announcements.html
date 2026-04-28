@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>PP — Announcement kit · dispatches</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  :root { --red:#e90d41; --ink:#0a0a0a; --silver:#b8bec1; --paper:#fafafa; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background:var(--ink); color:var(--paper);
+               font-family:'Inter', sans-serif; }
+  body { min-height: 100vh; }
+  #root { min-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+const RED = "#e90d41", INK = "#0a0a0a", SILVER = "#b8bec1", PAPER = "#fafafa";
+const H = { fontFamily: "'Rethink Sans', sans-serif", fontWeight: 800, letterSpacing: "-0.03em" };
+const B = { fontFamily: "'Inter', sans-serif" };
+const E = { fontFamily: "'Rethink Sans', sans-serif", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase" };
+
+// sessionStorage helpers
+const dismissedKey = (k) => `pp-ann-dismiss-${k}`;
+const wasDismissed = (k) => { try { return sessionStorage.getItem(dismissedKey(k)) === "1"; } catch { return false; } };
+const markDismissed = (k) => { try { sessionStorage.setItem(dismissedKey(k), "1"); } catch {} };
+const clearDismissed = (k) => { try { sessionStorage.removeItem(dismissedKey(k)); } catch {} };
+
+// ─────────────── Shared UI ───────────────
+const CloseX = ({ onClick, tint = "rgba(255,255,255,0.7)" }) => (
+  <button onClick={onClick} aria-label="Dismiss" style={{
+    background: "transparent", border: "none", cursor: "pointer",
+    width: 30, height: 30, borderRadius: 15, display: "grid", placeItems: "center",
+    color: tint, transition: "background .15s ease, color .15s ease",
+  }}
+    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.10)"; e.currentTarget.style.color = "#fff"; }}
+    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = tint; }}
+  >
+    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <path d="M1 1l12 12M13 1L1 13"/>
+    </svg>
+  </button>
+);
+
+const SectionHeader = ({ idx, title, desc, onReset, dismissed }) => (
+  <div style={{ marginBottom: 18, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24 }}>
+    <div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
+        <span style={{ ...E, fontSize: 10, color: RED }}>DISPATCH · {String(idx).padStart(3,"0")}</span>
+      </div>
+      <div style={{ ...H, fontSize: 22, color: PAPER }}>{title}</div>
+      <div style={{ ...B, fontSize: 13, color: "rgba(250,250,250,0.55)", marginTop: 4, maxWidth: 560 }}>{desc}</div>
+    </div>
+    {dismissed && onReset && (
+      <button onClick={onReset} style={{
+        ...B, fontSize: 11, fontWeight: 700, color: RED, background: "transparent",
+        border: `1px solid ${RED}`, padding: "6px 12px", borderRadius: 999, cursor: "pointer",
+        textTransform: "uppercase", letterSpacing: "0.1em",
+      }}>Replay</button>
+    )}
+  </div>
+);
+
+// ─────────────── 01 · Command Strip (typewriter) ───────────────
+const STRIP_MESSAGE = "New dispatch from Daniel — the Spring cohort opens at noon Helsinki.";
+const RED_TOKEN = "Spring cohort"; // word we paint red
+function CommandStrip() {
+  const K = "strip";
+  const [dismissed, setDismissed] = useState(() => wasDismissed(K));
+  const [count, setCount] = useState(0);
+  const [blinks, setBlinks] = useState(0);
+  const [showCursor, setShowCursor] = useState(true);
+  const [closing, setClosing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const autoDismissRef = useRef(null);
+
+  useEffect(() => {
+    if (dismissed) return;
+    setCount(0); setBlinks(0); setShowCursor(true); setClosing(false); setProgress(0);
+    let i = 0;
+    const id = setInterval(() => {
+      i++; setCount(i);
+      if (i >= STRIP_MESSAGE.length) {
+        clearInterval(id);
+        // blink 3 times then hide cursor, then run 3s auto-dismiss with progress bar
+        let b = 0;
+        const blinkId = setInterval(() => {
+          b++; setBlinks(b);
+          if (b >= 6) { // 3 full blinks (on/off pairs)
+            clearInterval(blinkId);
+            setShowCursor(false);
+            // Start auto-dismiss progress
+            const start = performance.now();
+            const tick = (t) => {
+              const p = Math.min(1, (t - start) / 3000);
+              setProgress(p);
+              if (p < 1 && !closing) autoDismissRef.current = requestAnimationFrame(tick);
+              else if (p >= 1) handleClose();
+            };
+            autoDismissRef.current = requestAnimationFrame(tick);
+          }
+        }, 300);
+        return () => clearInterval(blinkId);
+      }
+    }, 40);
+    return () => { clearInterval(id); if (autoDismissRef.current) cancelAnimationFrame(autoDismissRef.current); };
+    // eslint-disable-next-line
+  }, [dismissed]);
+
+  const handleClose = () => {
+    if (closing) return;
+    setClosing(true);
+    if (autoDismissRef.current) cancelAnimationFrame(autoDismissRef.current);
+    // reverse entry: shrink out
+    setTimeout(() => { markDismissed(K); setDismissed(true); }, 320);
+  };
+  const handleReset = () => { clearDismissed(K); setDismissed(false); };
+
+  // Render message, highlighting the RED_TOKEN once it is fully typed
+  const shown = STRIP_MESSAGE.slice(0, count);
+  const tokenStart = STRIP_MESSAGE.indexOf(RED_TOKEN);
+  const tokenEnd = tokenStart + RED_TOKEN.length;
+  const before = shown.slice(0, Math.min(count, tokenStart));
+  const mid = count > tokenStart ? shown.slice(tokenStart, Math.min(count, tokenEnd)) : "";
+  const after = count > tokenEnd ? shown.slice(tokenEnd, count) : "";
+  const cursorOn = showCursor && (blinks % 2 === 0);
+
+  if (dismissed) return (
+    <div style={{ ...B, fontSize: 12, color: "rgba(250,250,250,0.45)", padding: "14px 0" }}>
+      Dismissed for this session. <button onClick={handleReset} style={{ background: "transparent", border: "none", color: RED, cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>Replay</button>
+    </div>
+  );
+
+  return (
+    <div style={{
+      position: "relative", overflow: "hidden",
+      background: "#14141a",
+      border: "1px solid rgba(255,255,255,0.08)",
+      borderTop: `2px solid ${RED}`,
+      borderRadius: 6,
+      padding: "14px 20px",
+      display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
+      transformOrigin: "top",
+      transform: closing ? "scaleY(0)" : "scaleY(1)",
+      opacity: closing ? 0 : 1,
+      transition: "transform 320ms cubic-bezier(0.76,0,0.24,1), opacity 300ms ease",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, flex: 1, minWidth: 0 }}>
+        <span style={{ ...E, fontSize: 9, color: RED, flexShrink: 0 }}>▸ LIVE</span>
+        <div style={{ ...B, fontSize: 14, color: PAPER, fontWeight: 500, fontFamily: "'JetBrains Mono', ui-monospace, monospace", letterSpacing: "-0.005em" }}>
+          {before}<span style={{ color: RED, fontWeight: 700 }}>{mid}</span>{after}
+          <span style={{
+            display: "inline-block", width: 8, height: 14, marginLeft: 2,
+            background: RED, verticalAlign: "-2px",
+            opacity: cursorOn ? 1 : 0, transition: "opacity 60ms linear",
+          }}/>
+        </div>
+        <a href="#" style={{ ...B, fontSize: 13, fontWeight: 700, color: RED, textDecoration: "none", flexShrink: 0, marginLeft: 8 }}>
+          Read →
+        </a>
+      </div>
+      <CloseX onClick={handleClose} tint="rgba(255,255,255,0.85)"/>
+      {/* Auto-dismiss progress bar */}
+      <div style={{
+        position: "absolute", left: 0, bottom: 0, height: 2,
+        width: `${progress * 100}%`, background: RED, transition: "none",
+      }}/>
+    </div>
+  );
+}
+
+// ─────────────── 02 · Cinematic Modal ───────────────
+function CinematicModal() {
+  const K = "modal";
+  const [dismissed, setDismissed] = useState(() => wasDismissed(K));
+  const [state, setState] = useState("entering"); // entering | open | closing
+  useEffect(() => {
+    if (dismissed) return;
+    setState("entering");
+    const id = requestAnimationFrame(() => setState("open"));
+    return () => cancelAnimationFrame(id);
+  }, [dismissed]);
+
+  const open = state === "open";
+  const close = () => {
+    setState("closing");
+    setTimeout(() => { markDismissed(K); setDismissed(true); }, 320);
+  };
+  const reset = () => { clearDismissed(K); setDismissed(false); };
+
+  if (dismissed) return (
+    <div style={{ ...B, fontSize: 12, color: "rgba(250,250,250,0.45)", padding: "14px 0" }}>
+      Dismissed. <button onClick={reset} style={{ background: "transparent", border: "none", color: RED, cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>Replay</button>
+    </div>
+  );
+
+  return (
+    <div style={{ position: "relative", height: 440, borderRadius: 10, overflow: "hidden", background: "#050509",
+                  border: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* Faux page behind */}
+      <div style={{ position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse at 30% 0%, rgba(233,13,65,0.10), transparent 55%)" }}/>
+      <div style={{ position: "absolute", inset: 28, display: "grid", gridTemplateColumns: "repeat(8,1fr)", gap: 10, opacity: 0.2 }}>
+        {Array.from({length: 40}).map((_, i) => (
+          <div key={i} style={{ height: 8, borderRadius: 4, background: "rgba(255,255,255,0.1)" }}/>
+        ))}
+      </div>
+
+      {/* Dim backdrop */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "rgba(0,0,0,0.92)",
+        opacity: state === "open" ? 1 : 0,
+        transition: "opacity 300ms ease",
+      }}/>
+
+      {/* Modal card */}
+      <div style={{
+        position: "absolute", inset: 0, display: "grid", placeItems: "center", padding: 24,
+      }}>
+        <div style={{
+          width: "min(520px, 100%)",
+          background: "#0c0c12",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderTop: `3px solid ${RED}`,
+          borderRadius: 12,
+          padding: "32px 32px 28px",
+          boxShadow: "0 40px 100px rgba(0,0,0,0.8)",
+          transform: state === "open" ? "scale(1)" : "scale(0.94)",
+          opacity: state === "open" ? 1 : 0,
+          transition: state === "closing"
+            ? "transform 280ms cubic-bezier(0.34,1.56,0.64,1), opacity 260ms ease"
+            : "transform 360ms cubic-bezier(0.34,1.56,0.64,1), opacity 300ms ease",
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18 }}>
+            <span style={{ ...E, fontSize: 10, color: RED }}>▸ DISPATCH · 01</span>
+            <CloseX onClick={close}/>
+          </div>
+          <h3 style={{ ...H, fontSize: 34, lineHeight: 1.02, color: PAPER, margin: "0 0 14px" }}>
+            Twelve seats.<br/>
+            <span style={{ color: RED }}>Monday, 12:00.</span>
+          </h3>
+          <p style={{ ...B, fontSize: 14, lineHeight: 1.55, color: "rgba(250,250,250,0.72)", margin: "0 0 24px" }}>
+            The Inner Circle is a six-session workshop for founders who want to be understood, not just heard. First-come basis, no waitlist.
+          </p>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <button style={{ ...B, fontWeight: 700, fontSize: 14, background: RED, color: "#fff",
+                             border: "none", borderRadius: 10, padding: "12px 20px", cursor: "pointer" }}>
+              Hold my seat
+            </button>
+            <button onClick={close} style={{ ...B, fontWeight: 600, fontSize: 14, background: "transparent",
+                             color: "rgba(250,250,250,0.7)", border: "none", padding: "12px 10px", cursor: "pointer" }}>
+              Not this time
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────── 03 · Edge Slider ───────────────
+function EdgeSlider() {
+  const K = "slider";
+  const [dismissed, setDismissed] = useState(() => wasDismissed(K));
+  const [state, setState] = useState("closed"); // closed | entering | open | closing
+  useEffect(() => {
+    if (dismissed) return;
+    setState("entering");
+    const t = setTimeout(() => setState("open"), 20);
+    return () => clearTimeout(t);
+  }, [dismissed]);
+
+  const close = () => {
+    setState("closing");
+    setTimeout(() => { markDismissed(K); setDismissed(true); }, 400);
+  };
+  const reset = () => { clearDismissed(K); setDismissed(false); };
+
+  if (dismissed) return (
+    <div style={{ ...B, fontSize: 12, color: "rgba(250,250,250,0.45)", padding: "14px 0" }}>
+      Dismissed. <button onClick={reset} style={{ background: "transparent", border: "none", color: RED, cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>Replay</button>
+    </div>
+  );
+
+  const visible = state === "open";
+  return (
+    <div style={{ position: "relative", height: 260, borderRadius: 10, overflow: "hidden",
+                  background: "#07070b", border: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* faux page */}
+      <div style={{ position: "absolute", inset: 28, display: "grid", gridTemplateColumns: "repeat(12,1fr)", gap: 8, opacity: 0.12 }}>
+        {Array.from({length: 60}).map((_,i) => <div key={i} style={{ height: 6, background: "rgba(255,255,255,0.14)", borderRadius: 3 }}/>)}
+      </div>
+
+      <div style={{
+        position: "absolute", top: 20, right: 20, width: 360,
+        background: "#0e0e14",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 10,
+        padding: "16px 18px 16px 22px",
+        transform: visible ? "translateX(0)" : "translateX(calc(100% + 20px))",
+        opacity: state === "closed" ? 0 : 1,
+        transition: "transform 400ms cubic-bezier(0.16,1,0.3,1), opacity 300ms ease",
+        boxShadow: "0 18px 40px rgba(0,0,0,0.5)",
+        overflow: "hidden",
+      }}>
+        {/* Red left rail drawing downward */}
+        <div style={{
+          position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: RED,
+          transformOrigin: "top",
+          transform: visible ? "scaleY(1)" : "scaleY(0)",
+          transition: "transform 500ms 150ms cubic-bezier(0.16,1,0.3,1)",
+        }}/>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ ...E, fontSize: 9, color: RED, marginBottom: 4 }}>▸ INCOMING</div>
+            <div style={{ ...H, fontSize: 18, color: PAPER, lineHeight: 1.15 }}>
+              New essay — <span style={{ color: RED }}>"The price of legible work."</span>
+            </div>
+            <div style={{ ...B, fontSize: 13, color: "rgba(250,250,250,0.65)", marginTop: 6, lineHeight: 1.45 }}>
+              12 min read · filed Tuesday morning from Helsinki.
+            </div>
+            <a href="#" style={{ ...B, fontSize: 12, fontWeight: 700, color: RED, marginTop: 10, display: "inline-block" }}>
+              Read now →
+            </a>
+          </div>
+          <CloseX onClick={close}/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────── 04 · Countdown Banner (digit flip) ───────────────
+function useCountdown(target) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, target - now);
+  return {
+    d: Math.floor(diff / 86400000),
+    h: Math.floor((diff % 86400000) / 3600000),
+    m: Math.floor((diff % 3600000) / 60000),
+    s: Math.floor((diff % 60000) / 1000),
+  };
+}
+function FlipDigit({ value }) {
+  const [display, setDisplay] = useState(value);
+  const [flipping, setFlipping] = useState(false);
+  useEffect(() => {
+    if (value !== display) {
+      setFlipping(true);
+      const t = setTimeout(() => { setDisplay(value); setFlipping(false); }, 75);
+      return () => clearTimeout(t);
+    }
+  }, [value]);
+  return (
+    <span style={{ display: "inline-block", perspective: 200, width: "1ch" }}>
+      <span style={{
+        display: "inline-block",
+        transform: flipping ? "rotateX(-90deg)" : "rotateX(0deg)",
+        transition: "transform 150ms cubic-bezier(0.4,0,0.6,1)",
+        transformOrigin: "center",
+        willChange: "transform",
+      }}>{display}</span>
+    </span>
+  );
+}
+function CountdownBanner() {
+  const K = "countdown";
+  const [dismissed, setDismissed] = useState(() => wasDismissed(K));
+  const [state, setState] = useState("entering");
+  useEffect(() => {
+    if (dismissed) return;
+    setState("entering");
+    const t = setTimeout(() => setState("open"), 20);
+    return () => clearTimeout(t);
+  }, [dismissed]);
+  const [target] = useState(() => Date.now() + (2 * 86400 + 6 * 3600 + 23 * 60 + 47) * 1000);
+  const { d, h, m, s } = useCountdown(target);
+  const close = () => { setState("closing"); setTimeout(() => { markDismissed(K); setDismissed(true); }, 320); };
+  const reset = () => { clearDismissed(K); setDismissed(false); };
+
+  const pad = (n) => String(n).padStart(2,"0");
+  const Cell = ({ val, label }) => {
+    const [a, b] = pad(val).split("");
+    return (
+      <div style={{ textAlign: "center", minWidth: 56 }}>
+        <div style={{
+          ...H, fontSize: 30, color: "#fff", letterSpacing: "-0.04em",
+          fontVariantNumeric: "tabular-nums", lineHeight: 1,
+          display: "inline-flex",
+        }}>
+          <FlipDigit value={a}/>
+          <FlipDigit value={b}/>
+        </div>
+        <div style={{ ...E, fontSize: 9, color: "rgba(255,255,255,0.65)", marginTop: 6 }}>{label}</div>
+      </div>
+    );
+  };
+  const Sep = () => <span style={{ color: "rgba(255,255,255,0.25)", fontWeight: 800, fontSize: 22, lineHeight: 1 }}>:</span>;
+
+  if (dismissed) return (
+    <div style={{ ...B, fontSize: 12, color: "rgba(250,250,250,0.45)", padding: "14px 0" }}>
+      Dismissed. <button onClick={reset} style={{ background: "transparent", border: "none", color: RED, cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>Replay</button>
+    </div>
+  );
+
+  const open = state === "open";
+  return (
+    <div style={{
+      position: "relative", overflow: "hidden",
+      background: "#120208",
+      border: `1px solid ${RED}`,
+      borderRadius: 10,
+      padding: "18px 22px",
+      display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20,
+      transform: open ? "translateY(0)" : "translateY(-12px)",
+      opacity: open ? 1 : 0,
+      transition: "transform 360ms cubic-bezier(0.16,1,0.3,1), opacity 300ms ease",
+    }}>
+      <div style={{ position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse at 0% 50%, rgba(233,13,65,0.35), transparent 55%)",
+        pointerEvents: "none" }}/>
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 18, flex: 1 }}>
+        <span style={{ ...E, fontSize: 9, background: RED, color: "#fff", padding: "4px 10px", borderRadius: 999, flexShrink: 0 }}>
+          CLOSING
+        </span>
+        <div>
+          <div style={{ ...H, fontSize: 18, color: PAPER, lineHeight: 1.1 }}>
+            Last <span style={{ color: RED }}>{d} days</span> to apply.
+          </div>
+          <div style={{ ...B, fontSize: 12, color: "rgba(250,250,250,0.6)", marginTop: 2 }}>
+            Spring 2026 · Inner Circle · Twelve seats
+          </div>
+        </div>
+      </div>
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 8 }}>
+        <Cell val={d} label="DAYS"/><Sep/>
+        <Cell val={h} label="HRS"/><Sep/>
+        <Cell val={m} label="MIN"/><Sep/>
+        <Cell val={s} label="SEC"/>
+      </div>
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 4 }}>
+        <button style={{ ...B, fontWeight: 700, fontSize: 13, background: RED, color: "#fff",
+                         border: "none", borderRadius: 8, padding: "10px 16px", cursor: "pointer" }}>
+          Apply
+        </button>
+        <CloseX onClick={close}/>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────── 05 · Inline Disruption ───────────────
+function InlineDisruption() {
+  const K = "inline";
+  const [dismissed, setDismissed] = useState(() => wasDismissed(K));
+  const [revealed, setRevealed] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (dismissed) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) setRevealed(true); });
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [dismissed]);
+
+  const reset = () => { clearDismissed(K); setDismissed(false); setRevealed(false); };
+  if (dismissed) return (
+    <div style={{ ...B, fontSize: 12, color: "rgba(250,250,250,0.45)", padding: "14px 0" }}>
+      Dismissed. <button onClick={reset} style={{ background: "transparent", border: "none", color: RED, cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>Replay</button>
+    </div>
+  );
+
+  return (
+    <div style={{ position: "relative" }}>
+      {/* Fake reading content above & below */}
+      <div style={{ ...B, color: "rgba(250,250,250,0.5)", fontSize: 13.5, lineHeight: 1.75 }}>
+        <p style={{ margin: "0 0 14px" }}>
+          There's a particular kind of clarity you only get when you stop performing and start answering. Most founders never get there because the incentives of the room are all pointed the other way. The room rewards certainty. The work requires doubt.
+        </p>
+      </div>
+
+      <div ref={ref} style={{
+        position: "relative",
+        margin: "22px 0",
+        padding: "32px 32px",
+        background: "linear-gradient(180deg, #0f0f15, #080810)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderLeft: `4px solid ${RED}`,
+        borderRadius: 8,
+        opacity: revealed ? 1 : 0,
+        clipPath: revealed ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+        transition: "opacity 500ms ease, clip-path 500ms cubic-bezier(0.76,0,0.24,1)",
+      }}>
+        <div style={{ ...E, fontSize: 10, color: RED, marginBottom: 10 }}>▸ INTERRUPT</div>
+        <div style={{ ...H, fontSize: 28, lineHeight: 1.1, color: PAPER, marginBottom: 12 }}>
+          Stop reading for a second.
+        </div>
+        <div style={{ ...B, fontSize: 14.5, color: "rgba(250,250,250,0.8)", lineHeight: 1.55, maxWidth: 520 }}>
+          If what you've read so far is resonating, that's not an accident.
+          <a href="#" style={{ color: RED, fontWeight: 700, textDecoration: "underline", textUnderlineOffset: 3, marginLeft: 4 }}>
+            The full conversation is here →
+          </a>
+        </div>
+      </div>
+
+      <div style={{ ...B, color: "rgba(250,250,250,0.5)", fontSize: 13.5, lineHeight: 1.75 }}>
+        <p style={{ margin: 0 }}>
+          Back to the thread. The difference between an advisor and a confidant is whether they give you the answer they were paid to give or the one you actually need. One is a product. The other is a relationship.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────── App ───────────────
+function App() {
+  return (
+    <div style={{ maxWidth: 980, margin: "0 auto", padding: "56px 36px 96px" }}>
+      <header style={{ marginBottom: 48 }}>
+        <div style={{ ...E, fontSize: 11, color: RED }}>Purely · Personal</div>
+        <h1 style={{ ...H, fontSize: 48, margin: "10px 0 8px", color: PAPER, letterSpacing: "-0.04em" }}>
+          Announcement kit.
+        </h1>
+        <p style={{ ...B, fontSize: 15, lineHeight: 1.55, color: "rgba(250,250,250,0.65)", maxWidth: 580, margin: 0 }}>
+          Five dispatches. Red is only used on the word that carries the most weight. Every variant persists its dismissed state to <code style={{ background: "rgba(255,255,255,0.06)", padding: "2px 6px", borderRadius: 4, fontSize: 12 }}>sessionStorage</code> — replay buttons below each to see the entry animation again.
+        </p>
+      </header>
+
+      <section style={{ marginBottom: 56 }}>
+        <SectionHeader idx={1} title="Command strip" desc="Top-of-page strip. Types itself in at 40ms/char, cursor blinks three times, then a 3-second auto-dismiss countdown runs along the bottom."/>
+        <CommandStrip/>
+      </section>
+
+      <section style={{ marginBottom: 56 }}>
+        <SectionHeader idx={2} title="Cinematic modal" desc="Full-page dim to rgba(0,0,0,0.92). Card scales 0.94 → 1.0 on a cubic-bezier(0.34,1.56,0.64,1) overshoot curve. One message, one decision."/>
+        <CinematicModal/>
+      </section>
+
+      <section style={{ marginBottom: 56 }}>
+        <SectionHeader idx={3} title="Edge slider" desc="Slides in from the right. The red left rail draws downward 150ms after the card lands — a small, deliberate tell."/>
+        <EdgeSlider/>
+      </section>
+
+      <section style={{ marginBottom: 56 }}>
+        <SectionHeader idx={4} title="Countdown banner" desc="Live ticker with digit-flip — each digit rotates on a Y-axis when it changes. Red appears only on the number that matters."/>
+        <CountdownBanner/>
+      </section>
+
+      <section style={{ marginBottom: 24 }}>
+        <SectionHeader idx={5} title="Inline disruption" desc="Breaks the reading flow mid-article. Reveals with clip-path wipe the moment it enters the viewport."/>
+        <InlineDisruption/>
+      </section>
+
+      <footer style={{
+        marginTop: 64, paddingTop: 28,
+        borderTop: "1px solid rgba(255,255,255,0.08)",
+        display: "flex", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
+        ...B, fontSize: 12, color: "rgba(250,250,250,0.5)",
+      }}>
+        <div><b style={{ color: PAPER, fontWeight: 700 }}>Rule</b> — Red only on the word or number that carries weight.</div>
+        <div><b style={{ color: PAPER, fontWeight: 700 }}>Dismiss</b> — sessionStorage; resets on tab close.</div>
+        <div><b style={{ color: PAPER, fontWeight: 700 }}>Type</b> — Rethink Sans 800 · Inter</div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body></html>

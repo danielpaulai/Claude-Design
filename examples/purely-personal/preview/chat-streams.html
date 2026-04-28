@@ -1,0 +1,377 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>PP — 10 chat streaming animations</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body { margin:0; padding:0; background:#0a0a0a; color:#fff;
+               font-family:'Rethink Sans', sans-serif; }
+  body { padding:20px; }
+  h1 { font-weight:800; font-size:22px; margin:0 0 16px; letter-spacing:-0.02em; }
+  .sub { color: rgba(255,255,255,0.5); font-size:13px; margin: 0 0 20px; }
+  .grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .cell {
+    aspect-ratio: 1/1;
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .cell-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 10px 14px; border-bottom:1px solid rgba(255,255,255,0.06);
+    font-size:10px; color:rgba(255,255,255,0.5);
+    letter-spacing:0.18em; text-transform:uppercase;
+  }
+  .cell-header .idx { color:#fff; font-weight:800; }
+  .cell-body {
+    flex:1; padding:14px; display:flex; flex-direction:column; gap:10px;
+    font-family:'Inter', sans-serif; font-size:13px; line-height:1.5;
+    overflow:hidden;
+  }
+  .q, .a {
+    display:flex; gap:8px; align-items:flex-start;
+  }
+  .avatar {
+    flex-shrink:0; width:22px; height:22px; border-radius:11px;
+    display:grid; place-items:center;
+    font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:10px;
+    letter-spacing:0;
+  }
+  .avatar.u { background:#2a2a2a; color:#fff; }
+  .avatar.b { background:#fff; color:#0a0a0a; }
+  .bubble {
+    padding: 8px 12px; border-radius: 12px;
+    max-width: 230px;
+  }
+  .q .bubble { background:#1f1f1f; color:#e8e8e8; }
+  .a .bubble { background:#fff; color:#0a0a0a; }
+  /* Hide user bubble text wrapping issue */
+  .cell { user-select:none; }
+</style>
+</head>
+<body>
+
+<h1>10 streaming text styles · monochrome</h1>
+<div class="sub">Each cell loops a user prompt and a bot response, streamed in a distinct style.</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+/*
+  10 streaming styles. Each one has:
+    - a user question (shown fully, with a small delay before bot answers)
+    - a bot response revealed with the style's animation
+  All loop with a pause, then reset.
+*/
+
+const PROMPTS = [
+  { q: "What is a black hole?",
+    a: "A region of spacetime where gravity is so strong that nothing, not even light, can escape once it crosses the event horizon." },
+  { q: "How do bees find flowers?",
+    a: "They use UV vision and the sun's polarised light, then share coordinates back at the hive through a figure-eight waggle dance." },
+  { q: "Why is the sky blue?",
+    a: "Short blue wavelengths scatter more than red ones when sunlight hits the atmosphere, painting the dome blue in every direction." },
+  { q: "Who invented the paperclip?",
+    a: "Johan Vaaler patented an early design in 1899, but the familiar double-loop shape came from the Gem Manufacturing Company." },
+  { q: "How fast is a sneeze?",
+    a: "A sneeze can exit your face at about 160 km/h, propelling droplets more than two metres in under a tenth of a second." },
+  { q: "Can plants hear?",
+    a: "They can't hear, but some respond to vibration. Arabidopsis ramps up defense chemistry when it detects chewing-caterpillar buzz." },
+  { q: "Why do cats purr?",
+    a: "Purring is a low-frequency vibration (25–150 Hz) linked to relaxation and, studies suggest, to stimulating bone and tissue repair." },
+  { q: "What is ASMR?",
+    a: "Autonomous Sensory Meridian Response — a tingling, calm sensation triggered in some people by soft sounds and careful attention." },
+  { q: "How old is the ocean?",
+    a: "Liquid water has existed on Earth for roughly 4 billion years, making the ocean nearly as old as the planet itself." },
+  { q: "Why is water wet?",
+    a: "Water molecules cling to each other (cohesion) and to other surfaces (adhesion), so they spread and stick to your skin." },
+];
+
+const STYLE_NAMES = [
+  "Typewriter",     // char-by-char
+  "Token pop",      // whole words
+  "Wipe reveal",    // left-to-right mask
+  "Fade-in chars",  // each char fades individually
+  "Rise up",        // each word slides up
+  "Blur focus",     // each word starts blurred
+  "Scramble",       // characters cycle before locking
+  "Matrix drop",    // chars fall into place
+  "Highlighter",    // background sweep behind text
+  "Dictation",      // punctuation + trailing cursor
+];
+
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+function mkCell(idx, name, q) {
+  const c = el('div','cell');
+  const h = el('div','cell-header');
+  h.innerHTML = `<span><span class="idx">${String(idx+1).padStart(2,'0')}</span> · ${name}</span><span>LOOP</span>`;
+  const body = el('div','cell-body');
+  const qRow = el('div','q');
+  qRow.appendChild(el('div','avatar u','U'));
+  const qBubble = el('div','bubble');
+  qBubble.textContent = q;
+  qRow.appendChild(qBubble);
+  const aRow = el('div','a');
+  aRow.appendChild(el('div','avatar b','P'));
+  const aBubble = el('div','bubble');
+  aRow.appendChild(aBubble);
+  body.appendChild(qRow);
+  body.appendChild(aRow);
+  c.appendChild(h); c.appendChild(body);
+  return { cell:c, answerEl: aBubble };
+}
+
+// Helper: a reusable looper that waits for a promise-returning runner, then restarts.
+async function loop(fn, pause=1400) {
+  while (true) {
+    await fn();
+    await sleep(pause);
+  }
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ─────── Style implementations ───────
+
+// 01 Typewriter — char by char
+async function sTypewriter(el, text) {
+  el.textContent = '';
+  const cursor = '<span style="display:inline-block;width:2px;height:1em;background:#0a0a0a;vertical-align:-2px;margin-left:1px;animation:blink 1s step-end infinite"></span>';
+  for (let i = 0; i <= text.length; i++) {
+    el.innerHTML = text.slice(0, i).replace(/</g,'&lt;') + cursor;
+    await sleep(22 + Math.random()*32);
+  }
+  await sleep(600);
+  el.textContent = text;
+}
+
+// 02 Token pop — whole words appear with a tiny scale
+async function sTokenPop(el, text) {
+  el.innerHTML = '';
+  const words = text.split(/(\s+)/);
+  for (const w of words) {
+    if (/^\s+$/.test(w)) { el.appendChild(document.createTextNode(w)); continue; }
+    const span = document.createElement('span');
+    span.textContent = w;
+    span.style.display = 'inline-block';
+    span.style.transform = 'scale(0.6)';
+    span.style.opacity = 0;
+    span.style.transition = 'transform .22s cubic-bezier(.34,1.56,.64,1), opacity .22s';
+    el.appendChild(span);
+    await sleep(4);
+    span.style.transform = 'scale(1)';
+    span.style.opacity = 1;
+    await sleep(60 + Math.random()*40);
+  }
+}
+
+// 03 Wipe reveal — render full text, reveal left-to-right via clip-path
+async function sWipe(el, text) {
+  el.innerHTML = '';
+  const inner = document.createElement('span');
+  inner.textContent = text;
+  inner.style.display = 'inline-block';
+  inner.style.clipPath = 'inset(0 100% 0 0)';
+  inner.style.transition = 'clip-path 1.8s cubic-bezier(.25,.9,.3,1)';
+  el.appendChild(inner);
+  await sleep(20);
+  inner.style.clipPath = 'inset(0 0 0 0)';
+  await sleep(1820);
+}
+
+// 04 Fade-in chars — each char eases its opacity
+async function sFadeChars(el, text) {
+  el.innerHTML = '';
+  const spans = [];
+  for (const ch of text) {
+    const s = document.createElement('span');
+    s.textContent = ch;
+    s.style.opacity = '0';
+    s.style.transition = 'opacity .35s ease';
+    el.appendChild(s);
+    spans.push(s);
+  }
+  for (let i = 0; i < spans.length; i++) {
+    spans[i].style.opacity = '1';
+    await sleep(14);
+  }
+}
+
+// 05 Rise up — each word slides up from baseline
+async function sRise(el, text) {
+  el.innerHTML = '';
+  const words = text.split(/(\s+)/);
+  for (const w of words) {
+    if (/^\s+$/.test(w)) { el.appendChild(document.createTextNode(w)); continue; }
+    const wrap = document.createElement('span');
+    wrap.style.display = 'inline-block';
+    wrap.style.overflow = 'hidden';
+    wrap.style.verticalAlign = 'bottom';
+    const inner = document.createElement('span');
+    inner.textContent = w;
+    inner.style.display = 'inline-block';
+    inner.style.transform = 'translateY(1em)';
+    inner.style.transition = 'transform .35s cubic-bezier(.25,.9,.3,1)';
+    wrap.appendChild(inner);
+    el.appendChild(wrap);
+    await sleep(4);
+    inner.style.transform = 'translateY(0)';
+    await sleep(70);
+  }
+}
+
+// 06 Blur focus — each word starts blurred and sharpens
+async function sBlur(el, text) {
+  el.innerHTML = '';
+  const words = text.split(/(\s+)/);
+  for (const w of words) {
+    if (/^\s+$/.test(w)) { el.appendChild(document.createTextNode(w)); continue; }
+    const s = document.createElement('span');
+    s.textContent = w;
+    s.style.display = 'inline-block';
+    s.style.filter = 'blur(8px)';
+    s.style.opacity = '0';
+    s.style.transition = 'filter .45s ease, opacity .35s ease';
+    el.appendChild(s);
+    await sleep(4);
+    s.style.filter = 'blur(0)';
+    s.style.opacity = '1';
+    await sleep(55);
+  }
+}
+
+// 07 Scramble — characters cycle through random glyphs before locking in
+const SCRAMBLE_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234*#?!@";
+async function sScramble(el, text) {
+  el.innerHTML = '';
+  const spans = [];
+  for (const ch of text) {
+    const s = document.createElement('span');
+    s.textContent = ch === ' ' ? ' ' : SCRAMBLE_CHARS[Math.floor(Math.random()*SCRAMBLE_CHARS.length)];
+    s.dataset.final = ch;
+    el.appendChild(s);
+    spans.push(s);
+  }
+  // Lock sequentially, while other chars keep cycling
+  const cyc = setInterval(() => {
+    spans.forEach(s => {
+      if (!s.dataset.locked) {
+        s.textContent = s.dataset.final === ' ' ? ' ' : SCRAMBLE_CHARS[Math.floor(Math.random()*SCRAMBLE_CHARS.length)];
+      }
+    });
+  }, 40);
+  for (let i = 0; i < spans.length; i++) {
+    await sleep(12);
+    spans[i].textContent = spans[i].dataset.final;
+    spans[i].dataset.locked = '1';
+  }
+  clearInterval(cyc);
+}
+
+// 08 Matrix drop — each char falls in from above
+async function sDrop(el, text) {
+  el.innerHTML = '';
+  for (const ch of text) {
+    if (ch === ' ') { el.appendChild(document.createTextNode(' ')); continue; }
+    const wrap = document.createElement('span');
+    wrap.style.display = 'inline-block';
+    wrap.style.overflow = 'hidden';
+    wrap.style.verticalAlign = 'top';
+    wrap.style.lineHeight = '1.5';
+    const inner = document.createElement('span');
+    inner.textContent = ch;
+    inner.style.display = 'inline-block';
+    inner.style.transform = 'translateY(-1em)';
+    inner.style.opacity = '0';
+    inner.style.transition = 'transform .28s cubic-bezier(.25,.9,.3,1), opacity .2s';
+    wrap.appendChild(inner);
+    el.appendChild(wrap);
+    await sleep(4);
+    inner.style.transform = 'translateY(0)';
+    inner.style.opacity = '1';
+    await sleep(22);
+  }
+}
+
+// 09 Highlighter — a black highlight sweeps across as text appears behind
+async function sHighlighter(el, text) {
+  el.innerHTML = '';
+  el.style.position = 'relative';
+  const inner = document.createElement('span');
+  inner.textContent = text;
+  inner.style.position = 'relative';
+  inner.style.zIndex = 2;
+  // Animated sweep via background-size
+  inner.style.backgroundImage = 'linear-gradient(90deg, #0a0a0a 0%, #0a0a0a 100%)';
+  inner.style.backgroundRepeat = 'no-repeat';
+  inner.style.backgroundSize = '0% 100%';
+  inner.style.transition = 'background-size 1.8s cubic-bezier(.25,.9,.3,1)';
+  inner.style.color = '#0a0a0a';
+  inner.style.webkitBackgroundClip = 'padding-box';
+  // Render text initially hidden-behind white; reveal as highlight passes.
+  inner.style.color = 'transparent';
+  inner.style.webkitTextStroke = '0';
+  // Trick: use a span layered behind showing text; the sweep IS the reveal.
+  const shown = document.createElement('span');
+  shown.textContent = text;
+  shown.style.position = 'absolute';
+  shown.style.left = 0; shown.style.top = 0;
+  shown.style.color = '#0a0a0a';
+  shown.style.clipPath = 'inset(0 100% 0 0)';
+  shown.style.transition = 'clip-path 1.8s cubic-bezier(.25,.9,.3,1)';
+  el.appendChild(shown);
+  el.appendChild(inner);
+  await sleep(20);
+  shown.style.clipPath = 'inset(0 0 0 0)';
+  await sleep(1820);
+}
+
+// 10 Dictation — groups of words with commas, a trailing cursor pulses
+async function sDictation(el, text) {
+  el.textContent = '';
+  const parts = text.split(/(?<=[,.])\s+/);
+  const cur = '<span style="display:inline-block;width:6px;height:1em;background:#0a0a0a;vertical-align:-2px;margin-left:2px;border-radius:2px;animation:pulse 0.9s ease-in-out infinite"></span>';
+  let acc = '';
+  for (const chunk of parts) {
+    acc += (acc ? ' ' : '') + chunk;
+    el.innerHTML = acc.replace(/</g,'&lt;') + cur;
+    await sleep(340 + Math.random()*220);
+  }
+  el.textContent = text;
+}
+
+const RUNNERS = [
+  sTypewriter, sTokenPop, sWipe, sFadeChars, sRise,
+  sBlur, sScramble, sDrop, sHighlighter, sDictation,
+];
+
+// ─────── Mount & run ───────
+const grid = document.getElementById('grid');
+PROMPTS.forEach((prompt, i) => {
+  const { cell, answerEl } = mkCell(i, STYLE_NAMES[i], prompt.q);
+  grid.appendChild(cell);
+  const runner = RUNNERS[i];
+  (async () => {
+    while (true) {
+      answerEl.textContent = '';
+      await sleep(600);
+      await runner(answerEl, prompt.a);
+      await sleep(1800);
+    }
+  })();
+});
+
+// Cursor blink keyframes
+const kf = document.createElement('style');
+kf.textContent = `
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+`;
+document.head.appendChild(kf);
+</script>
+</body></html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PP — Motion & states</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:22px; background:#fff; font-family:var(--font-body); }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-family:var(--font-heading); font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:#6b7075; padding:6px 10px; border-bottom:1px solid #e8eaec; }
+  td { font-size:13px; color:#0a0a0a; padding:10px; border-bottom:1px solid #e8eaec; vertical-align:middle; }
+  td.token { font-family: ui-monospace, Menlo, monospace; color:#3a3d40; font-size:11.5px; width:30%; }
+  .chip { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:999px; background:#e90d41; color:#fff; font-family:var(--font-heading); font-weight:700; font-size:12px; }
+  .chip.hover { background:#c80a37; }
+  .chip.press { background:#a9082f; transform:translateY(1px); opacity:.92; }
+  .chip.ghost { background:transparent; color:#0a0a0a; border:2px solid #0a0a0a; }
+</style></head><body>
+  <table>
+    <tr><th>State</th><th>Example</th><th>Rule</th></tr>
+    <tr><td class="token">default</td><td><span class="chip">Repost</span></td><td>Red fill, white text</td></tr>
+    <tr><td class="token">:hover — 6% darker</td><td><span class="chip hover">Repost</span></td><td>No scale. 120ms ease-std.</td></tr>
+    <tr><td class="token">:active — 1px y, 0.92 α</td><td><span class="chip press">Repost</span></td><td>No shrink</td></tr>
+    <tr><td class="token">focus ring</td><td><span class="chip ghost" style="outline:2px solid rgba(233,13,65,.6); outline-offset:2px">Read more</span></td><td>2px red @60%, 2px offset</td></tr>
+  </table>
+</body></html>

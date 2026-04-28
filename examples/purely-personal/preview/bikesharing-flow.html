@@ -1,0 +1,353 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>PP — Loop · iOS signup flow</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body { margin:0; padding:0; background: var(--color-off-white); font-family: 'Rethink Sans', sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+
+<script type="text/babel">
+const { IOSDevice } = window;
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+const RED = "#e90d41";
+const INK = "#0a0a0a";
+const PAPER = "#f7f7f8";
+const MUTE = "#8a8a8f";
+
+// ─── Reusable bits ───
+const CTA = ({ children, secondary }) => (
+  <button style={{
+    width:"100%", border:"none", borderRadius:16, padding:"18px 20px",
+    fontFamily:"inherit", fontWeight:700, fontSize:17, letterSpacing:"-0.01em",
+    background: secondary ? "rgba(10,10,10,0.06)" : INK,
+    color: secondary ? INK : "#fff",
+    cursor:"pointer",
+  }}>{children}</button>
+);
+
+const Field = ({ label, value, focus, placeholder }) => (
+  <div style={{ marginBottom:14 }}>
+    <div style={{
+      fontSize:12, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase",
+      color: MUTE, marginBottom:8,
+    }}>{label}</div>
+    <div style={{
+      border: `1.5px solid ${focus ? RED : "rgba(10,10,10,0.12)"}`,
+      borderRadius:14, padding:"14px 16px", fontSize:17, fontWeight:500,
+      color: value ? INK : MUTE, background: "#fff",
+      boxShadow: focus ? `0 0 0 4px rgba(233,13,65,0.1)` : "none",
+    }}>{value || placeholder}</div>
+  </div>
+);
+
+const Dots = ({ n, active }) => (
+  <div style={{ display:"flex", gap:6, justifyContent:"center", marginTop:16 }}>
+    {Array.from({ length: n }).map((_, i) => (
+      <div key={i} style={{
+        width: i === active ? 22 : 6, height: 6, borderRadius: 3,
+        background: i === active ? RED : "rgba(10,10,10,0.15)",
+      }}/>
+    ))}
+  </div>
+);
+
+const Stamp = () => (
+  <div style={{
+    display:"inline-block",
+    fontFamily:"'Rethink Sans', sans-serif", fontSize:10, fontWeight:800,
+    letterSpacing:"0.2em", textTransform:"uppercase", color: RED,
+    border:`1.5px solid ${RED}`, borderRadius:3, padding:"4px 8px",
+    transform:"rotate(-3deg)", marginBottom:18,
+  }}>Loop · Berlin</div>
+);
+
+// ─── Screen 1 · Splash / welcome ───
+const S1 = () => (
+  <IOSDevice width={375} height={812}>
+    <div style={{
+      position:"absolute", inset:0,
+      background: `linear-gradient(180deg, ${PAPER} 0%, ${PAPER} 55%, #efeff0 100%)`,
+    }}/>
+    {/* Faux map lines */}
+    <svg width="375" height="500" style={{ position:"absolute", top:40, left:0, opacity:0.5 }}>
+      {[0,1,2,3,4,5,6].map(i => (
+        <path key={i} d={`M -20 ${40+i*60} Q 100 ${10+i*60}, 200 ${50+i*60} T 400 ${40+i*60}`}
+              stroke="rgba(10,10,10,0.08)" strokeWidth="1" fill="none"/>
+      ))}
+    </svg>
+    {/* Bike pin */}
+    <div style={{
+      position:"absolute", left:"50%", top:180, transform:"translateX(-50%)",
+      width:64, height:64, borderRadius:32, background:RED,
+      display:"grid", placeItems:"center",
+      boxShadow:"0 12px 30px rgba(233,13,65,0.35)",
+    }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/>
+        <path d="M12 17.5V14l-3-3 4-3 2 3h3"/>
+      </svg>
+    </div>
+    <div style={{ position:"absolute", left:28, right:28, top: 310 }}>
+      <Stamp/>
+      <div style={{
+        fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+        fontSize:42, lineHeight:1.0, letterSpacing:"-0.035em", color:INK,
+      }}>Hop on.<br/>Loop the city.</div>
+      <div style={{
+        marginTop:14, fontSize:17, color: MUTE, lineHeight:1.45, maxWidth: 300,
+      }}>Unlock any Loop bike in under 3 seconds. First 10 minutes on us.</div>
+    </div>
+    <div style={{ position:"absolute", left:24, right:24, bottom: 48 }}>
+      <CTA>Get started</CTA>
+      <div style={{ textAlign:"center", marginTop:14, fontSize:14, color: MUTE }}>
+        Already have an account? <span style={{ color: INK, fontWeight:700 }}>Sign in</span>
+      </div>
+    </div>
+  </IOSDevice>
+);
+
+// ─── Screen 2 · Phone number ───
+const S2 = () => (
+  <IOSDevice width={375} height={812} keyboard>
+    <div style={{ position:"absolute", inset:0, background:PAPER }}/>
+    <div style={{ position:"absolute", left:24, right:24, top: 72 }}>
+      <div style={{ fontSize:14, fontWeight:700, color: MUTE, letterSpacing:"0.15em" }}>STEP 1 OF 4</div>
+      <div style={{
+        marginTop:12, fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+        fontSize:34, lineHeight:1.05, letterSpacing:"-0.03em", color:INK,
+      }}>What's your number?</div>
+      <div style={{ marginTop:10, fontSize:16, color: MUTE, lineHeight:1.45 }}>
+        We'll text a 6-digit code to verify it's really you.
+      </div>
+      <div style={{ marginTop:28 }}>
+        <div style={{
+          fontSize:12, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase",
+          color: MUTE, marginBottom:8,
+        }}>Mobile number</div>
+        <div style={{ display:"flex", gap:10 }}>
+          <div style={{
+            border:"1.5px solid rgba(10,10,10,0.12)", borderRadius:14, padding:"14px 12px",
+            fontSize:17, fontWeight:600, background:"#fff", display:"flex", alignItems:"center", gap:6,
+          }}>🇩🇪 +49</div>
+          <div style={{ flex:1,
+            border:`1.5px solid ${RED}`, borderRadius:14, padding:"14px 16px",
+            fontSize:17, fontWeight:500, background:"#fff",
+            boxShadow:`0 0 0 4px rgba(233,13,65,0.1)`,
+          }}>176 2341 5<span style={{ borderLeft:`1.5px solid ${RED}`, marginLeft:2, paddingLeft:1 }}/></div>
+        </div>
+      </div>
+      <Dots n={4} active={0}/>
+    </div>
+    <div style={{ position:"absolute", left:24, right:24, bottom: 280 }}>
+      <CTA>Send code</CTA>
+      <div style={{ textAlign:"center", marginTop:12, fontSize:12, color: MUTE, lineHeight:1.5 }}>
+        By continuing you agree to Loop's <u>Terms</u> and <u>Privacy</u>.
+      </div>
+    </div>
+  </IOSDevice>
+);
+
+// ─── Screen 3 · OTP ───
+const S3 = () => {
+  const digits = ["4","9","2","7","",""];
+  return (
+    <IOSDevice width={375} height={812} keyboard>
+      <div style={{ position:"absolute", inset:0, background:PAPER }}/>
+      <div style={{ position:"absolute", left:24, right:24, top: 72 }}>
+        <div style={{ fontSize:14, fontWeight:700, color: MUTE, letterSpacing:"0.15em" }}>STEP 2 OF 4</div>
+        <div style={{
+          marginTop:12, fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+          fontSize:34, lineHeight:1.05, letterSpacing:"-0.03em", color:INK,
+        }}>Enter the code.</div>
+        <div style={{ marginTop:10, fontSize:16, color: MUTE, lineHeight:1.45 }}>
+          Sent to <b style={{ color:INK }}>+49 176 2341 5678</b>. <u>Change number</u>
+        </div>
+        <div style={{ marginTop:32, display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:8 }}>
+          {digits.map((d, i) => (
+            <div key={i} style={{
+              aspectRatio:"1/1.2", borderRadius:12,
+              border:`1.5px solid ${i === 4 ? RED : "rgba(10,10,10,0.12)"}`,
+              background:"#fff", display:"grid", placeItems:"center",
+              fontFamily:"'Rethink Sans', sans-serif", fontWeight:800, fontSize:24,
+              boxShadow: i === 4 ? `0 0 0 4px rgba(233,13,65,0.1)` : "none",
+            }}>{d || (i === 4 ? <span style={{ width:2, height:22, background:RED, display:"inline-block" }}/> : "")}</div>
+          ))}
+        </div>
+        <div style={{ marginTop:22, textAlign:"center", fontSize:14, color: MUTE }}>
+          Didn't get it? <span style={{ color:INK, fontWeight:700 }}>Resend in 0:28</span>
+        </div>
+        <Dots n={4} active={1}/>
+      </div>
+    </IOSDevice>
+  );
+};
+
+// ─── Screen 4 · Profile (name + DOB) ───
+const S4 = () => (
+  <IOSDevice width={375} height={812}>
+    <div style={{ position:"absolute", inset:0, background:PAPER }}/>
+    <div style={{ position:"absolute", left:24, right:24, top: 72 }}>
+      <div style={{ fontSize:14, fontWeight:700, color: MUTE, letterSpacing:"0.15em" }}>STEP 3 OF 4</div>
+      <div style={{
+        marginTop:12, fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+        fontSize:34, lineHeight:1.05, letterSpacing:"-0.03em", color:INK,
+      }}>Tell us who you are.</div>
+      <div style={{ marginTop:10, fontSize:16, color: MUTE, lineHeight:1.45 }}>
+        So we know who to thank when you return the bike.
+      </div>
+      <div style={{ marginTop:28 }}>
+        <Field label="First name" value="Anja" focus/>
+        <Field label="Last name" value="Weber"/>
+        <Field label="Date of birth" value="04 / 11 / 1996"/>
+        <Field label="Email" value="anja.weber@gmail.com"/>
+      </div>
+      <Dots n={4} active={2}/>
+    </div>
+    <div style={{ position:"absolute", left:24, right:24, bottom: 48 }}>
+      <CTA>Continue</CTA>
+    </div>
+  </IOSDevice>
+);
+
+// ─── Screen 5 · Plan picker ───
+const S5 = () => {
+  const plans = [
+    { tag: "Pay as you go", price: "€1.50", unit: "unlock + €0.15/min", selected: false },
+    { tag: "Weekly", price: "€12", unit: "60 min/day included", selected: true, badge: "Most popular" },
+    { tag: "Monthly", price: "€29", unit: "Unlimited 60-min rides", selected: false },
+  ];
+  return (
+    <IOSDevice width={375} height={812}>
+      <div style={{ position:"absolute", inset:0, background:PAPER }}/>
+      <div style={{ position:"absolute", left:24, right:24, top: 72 }}>
+        <div style={{ fontSize:14, fontWeight:700, color: MUTE, letterSpacing:"0.15em" }}>STEP 4 OF 4</div>
+        <div style={{
+          marginTop:12, fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+          fontSize:34, lineHeight:1.05, letterSpacing:"-0.03em", color:INK,
+        }}>Pick your plan.</div>
+        <div style={{ marginTop:10, fontSize:16, color: MUTE, lineHeight:1.45 }}>
+          Change or cancel anytime. No lock-in, no paperwork.
+        </div>
+        <div style={{ marginTop:24, display:"flex", flexDirection:"column", gap:10 }}>
+          {plans.map((p, i) => (
+            <div key={i} style={{
+              border: `1.5px solid ${p.selected ? RED : "rgba(10,10,10,0.1)"}`,
+              background: p.selected ? "#fff" : "#fff",
+              borderRadius:16, padding:"16px 18px", position:"relative",
+              boxShadow: p.selected ? `0 6px 16px rgba(233,13,65,0.14)` : "none",
+            }}>
+              {p.badge && (
+                <div style={{
+                  position:"absolute", top:-9, right:16,
+                  background: INK, color:"#fff", fontSize:10, fontWeight:800,
+                  letterSpacing:"0.1em", textTransform:"uppercase",
+                  borderRadius:20, padding:"4px 10px",
+                }}>{p.badge}</div>
+              )}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+                <div>
+                  <div style={{ fontWeight:700, fontSize:17, color:INK }}>{p.tag}</div>
+                  <div style={{ fontSize:14, color: MUTE, marginTop:4 }}>{p.unit}</div>
+                </div>
+                <div style={{
+                  fontFamily:"'Rethink Sans',sans-serif", fontWeight:800, fontSize:24,
+                  color: p.selected ? RED : INK, letterSpacing:"-0.02em",
+                }}>{p.price}</div>
+              </div>
+              <div style={{
+                position:"absolute", right:16, bottom:16,
+                width:22, height:22, borderRadius:11,
+                border:`2px solid ${p.selected ? RED : "rgba(10,10,10,0.2)"}`,
+                background: p.selected ? RED : "transparent",
+                display:"grid", placeItems:"center",
+              }}>
+                {p.selected && <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <Dots n={4} active={3}/>
+      </div>
+      <div style={{ position:"absolute", left:24, right:24, bottom: 48 }}>
+        <CTA>Continue with Weekly</CTA>
+      </div>
+    </IOSDevice>
+  );
+};
+
+// ─── Screen 6 · Welcome / first ride ───
+const S6 = () => (
+  <IOSDevice width={375} height={812}>
+    <div style={{
+      position:"absolute", inset:0,
+      background: `radial-gradient(circle at 50% 220px, #ffd0d9 0%, ${PAPER} 55%)`,
+    }}/>
+    <div style={{
+      position:"absolute", left:"50%", top:120, transform:"translateX(-50%)",
+      width:120, height:120, borderRadius:60, background:RED,
+      display:"grid", placeItems:"center",
+      boxShadow:"0 20px 50px rgba(233,13,65,0.35)",
+    }}>
+      <svg width="52" height="40" viewBox="0 0 52 40" fill="none">
+        <path d="M4 26l12 10L48 4" stroke="#fff" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </div>
+    <div style={{ position:"absolute", left:28, right:28, top: 280, textAlign:"center" }}>
+      <div style={{
+        fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+        fontSize:38, lineHeight:1.05, letterSpacing:"-0.03em", color:INK,
+      }}>You're in, Anja.</div>
+      <div style={{
+        marginTop:12, fontSize:17, color: MUTE, lineHeight:1.45, maxWidth: 300, margin:"12px auto 0",
+      }}>Your first 10 minutes are free. Scan any Loop QR to unlock.</div>
+    </div>
+    <div style={{
+      position:"absolute", left:24, right:24, top: 440,
+      background:"#fff", borderRadius:20, padding:22,
+      border:"1px solid rgba(10,10,10,0.06)",
+    }}>
+      <div style={{ fontSize:12, fontWeight:800, color:RED, letterSpacing:"0.15em" }}>NEAREST BIKE</div>
+      <div style={{
+        marginTop:6, fontFamily:"'Rethink Sans', sans-serif", fontWeight:800,
+        fontSize:22, letterSpacing:"-0.02em", color: INK,
+      }}>Hermannplatz · 3 min walk</div>
+      <div style={{ marginTop:4, fontSize:14, color: MUTE }}>4 bikes available · 120m away</div>
+    </div>
+    <div style={{ position:"absolute", left:24, right:24, bottom: 48 }}>
+      <CTA>Find a bike</CTA>
+      <div style={{ height:10 }}/>
+      <CTA secondary>Explore the map</CTA>
+    </div>
+  </IOSDevice>
+);
+
+// ─── Canvas layout ───
+function App() {
+  return (
+    <DesignCanvas title="Loop — iOS signup flow" subtitle="First-time user · Berlin launch · 6 screens">
+      <DCSection id="flow" title="Signup flow" subtitle="Tap any screen to focus. Drag to reorder.">
+        <DCArtboard id="s1" label="01 · Welcome"          width={400} height={840}><S1/></DCArtboard>
+        <DCArtboard id="s2" label="02 · Phone number"     width={400} height={840}><S2/></DCArtboard>
+        <DCArtboard id="s3" label="03 · Verify code"      width={400} height={840}><S3/></DCArtboard>
+        <DCArtboard id="s4" label="04 · Profile"          width={400} height={840}><S4/></DCArtboard>
+        <DCArtboard id="s5" label="05 · Pick plan"        width={400} height={840}><S5/></DCArtboard>
+        <DCArtboard id="s6" label="06 · Welcome in"       width={400} height={840}><S6/></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body></html>

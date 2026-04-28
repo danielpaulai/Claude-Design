@@ -1,0 +1,487 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>PP — Shader wallpapers</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body { margin:0; padding:0; background:#050505; color:#fff; overflow:hidden;
+              font-family: 'Rethink Sans', sans-serif; }
+  .stage {
+    position: fixed; inset: 0; display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px; background:#000;
+  }
+  .tile {
+    position: relative; overflow: hidden;
+    background:#0a0a0a; cursor: crosshair;
+  }
+  .tile canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .label {
+    position:absolute; top:16px; left:16px; z-index:2;
+    display:flex; align-items:center; gap:10px;
+    pointer-events:none;
+  }
+  .idx { font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:11px;
+         color:#e90d41; letter-spacing:0.22em; }
+  .name { font-family:'Rethink Sans', sans-serif; font-weight:700; font-size:11px;
+          color:rgba(255,255,255,0.85); letter-spacing:0.18em; text-transform:uppercase; }
+  .caption {
+    position:absolute; bottom:16px; left:16px; right:16px; z-index:2;
+    font-family:'Inter', sans-serif; font-size:11px; color:rgba(255,255,255,0.5);
+    pointer-events:none;
+  }
+  .brand {
+    position:fixed; top:16px; right:20px; z-index:3;
+    font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:10px;
+    letter-spacing:0.28em; text-transform:uppercase; color:rgba(255,255,255,0.4);
+  }
+  /* Grid separator lines */
+  .tile + .tile { border-left: 1px solid rgba(255,255,255,0.06); }
+</style>
+</head>
+<body>
+<div class="brand">Purely · Personal · Wallpapers</div>
+<div class="stage">
+  <div class="tile" data-shader="1">
+    <canvas></canvas>
+    <div class="label"><span class="idx">01</span><span class="name">Aurora</span></div>
+    <div class="caption">Move cursor — warm aurora follows. Click to pulse.</div>
+  </div>
+  <div class="tile" data-shader="2">
+    <canvas></canvas>
+    <div class="label"><span class="idx">02</span><span class="name">Ink grid</span></div>
+    <div class="caption">Magnetic dots bend toward the cursor. Click to scatter.</div>
+  </div>
+  <div class="tile" data-shader="3">
+    <canvas></canvas>
+    <div class="label"><span class="idx">03</span><span class="name">Ripple</span></div>
+    <div class="caption">Click anywhere to drop a ripple. Move to tilt the pond.</div>
+  </div>
+  <div class="tile" data-shader="4">
+    <canvas></canvas>
+    <div class="label"><span class="idx">04</span><span class="name">Plasma</span></div>
+    <div class="caption">Cursor warps field lines. Hold click to condense.</div>
+  </div>
+  <div class="tile" data-shader="5">
+    <canvas></canvas>
+    <div class="label"><span class="idx">05</span><span class="name">Orbits</span></div>
+    <div class="caption">Particles orbit the cursor. Click to release them.</div>
+  </div>
+</div>
+
+<script>
+const RED_R = 233, RED_G = 13, RED_B = 65;
+const RED = "#e90d41";
+
+// Each shader runs as a canvas 2d painter. They share the same mouse state.
+// Why 2D not WebGL? Fewer ways to break, works on every browser, plenty fast at 5 tiles.
+
+function setupTile(tile, init) {
+  const canvas = tile.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, DPR = 1;
+  const state = {
+    mx: 0.5, my: 0.5,          // normalized mouse
+    mxPrev: 0.5, myPrev: 0.5,
+    down: false,
+    inside: false,
+    clicks: [],                // {x, y, t}
+    t0: performance.now(),
+  };
+  function resize() {
+    const r = tile.getBoundingClientRect();
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    W = Math.max(1, Math.floor(r.width * DPR));
+    H = Math.max(1, Math.floor(r.height * DPR));
+    canvas.width = W; canvas.height = H;
+  }
+  resize();
+  new ResizeObserver(resize).observe(tile);
+
+  tile.addEventListener('mousemove', (e) => {
+    const r = tile.getBoundingClientRect();
+    state.mxPrev = state.mx; state.myPrev = state.my;
+    state.mx = (e.clientX - r.left) / r.width;
+    state.my = (e.clientY - r.top)  / r.height;
+    state.inside = true;
+  });
+  tile.addEventListener('mouseleave', () => { state.inside = false; });
+  tile.addEventListener('mousedown', (e) => {
+    state.down = true;
+    const r = tile.getBoundingClientRect();
+    state.clicks.push({
+      x: (e.clientX - r.left) / r.width,
+      y: (e.clientY - r.top)  / r.height,
+      t: performance.now(),
+    });
+    if (state.clicks.length > 8) state.clicks.shift();
+  });
+  tile.addEventListener('mouseup',   () => { state.down = false; });
+  tile.addEventListener('click',     (e) => e.preventDefault());
+
+  const painter = init({ canvas, ctx, state, get W(){return W;}, get H(){return H;}, get DPR(){return DPR;} });
+
+  function loop() {
+    const t = (performance.now() - state.t0) / 1000;
+    painter(t);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// ── 01 · Aurora: warm radial fog following the mouse ──
+function initAurora({ ctx, state, W, H }) {
+  let lastW = 0, lastH = 0;
+  let offX = 0, offY = 0;
+  return (t) => {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    // Ease offset toward mouse
+    const tx = state.mx * w, ty = state.my * h;
+    offX += (tx - offX) * 0.06;
+    offY += (ty - offY) * 0.06;
+
+    // Base gradient wash, animated
+    const ang = t * 0.1;
+    const g = ctx.createLinearGradient(0,0,w,h);
+    g.addColorStop(0, '#08080a');
+    g.addColorStop(0.5 + 0.1*Math.sin(ang), '#120608');
+    g.addColorStop(1, '#05050a');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+
+    // Three bands of aurora blobs
+    const blobs = 6;
+    for (let i = 0; i < blobs; i++) {
+      const phase = t * 0.4 + i * 1.1;
+      const bx = offX + Math.cos(phase + i) * (w * 0.28);
+      const by = offY + Math.sin(phase * 0.8 + i*0.7) * (h * 0.22);
+      const r = Math.min(w,h) * (0.35 + 0.15 * Math.sin(phase*0.6));
+      const rg = ctx.createRadialGradient(bx, by, 0, bx, by, r);
+      const alpha = state.down ? 0.55 : 0.32;
+      rg.addColorStop(0, `rgba(${RED_R},${RED_G},${RED_B},${alpha})`);
+      rg.addColorStop(0.6, `rgba(${RED_R},${RED_G},${RED_B},0.05)`);
+      rg.addColorStop(1, 'rgba(233,13,65,0)');
+      ctx.fillStyle = rg;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Click pulse rings
+    state.clicks.forEach(c => {
+      const age = (performance.now() - c.t) / 1000;
+      if (age > 2) return;
+      const rad = age * Math.min(w,h) * 0.8;
+      ctx.strokeStyle = `rgba(${RED_R},${RED_G},${RED_B},${0.6*(1-age/2)})`;
+      ctx.lineWidth = 2 * (1 - age/2);
+      ctx.beginPath(); ctx.arc(c.x*w, c.y*h, rad, 0, Math.PI*2); ctx.stroke();
+    });
+
+    // Grain
+    ctx.globalAlpha = 0.04;
+    for (let i = 0; i < 80; i++) {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(Math.random()*w, Math.random()*h, 1, 1);
+    }
+    ctx.globalAlpha = 1;
+  };
+}
+
+// ── 02 · Ink grid: magnetic dots that bend toward the cursor ──
+function initGrid({ ctx, state }) {
+  let particles = null;
+  let pW = 0, pH = 0;
+  function build(w, h) {
+    const step = Math.max(18, Math.round(Math.min(w,h) / 40));
+    particles = [];
+    for (let y = step/2; y < h; y += step) {
+      for (let x = step/2; x < w; x += step) {
+        particles.push({ ox: x, oy: y, x, y, vx: 0, vy: 0 });
+      }
+    }
+    pW = w; pH = h;
+  }
+  return (t) => {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    if (!particles || pW !== w || pH !== h) build(w, h);
+
+    ctx.fillStyle = 'rgba(8,8,10,0.9)';
+    ctx.fillRect(0,0,w,h);
+
+    const mx = state.mx * w, my = state.my * h;
+    const pushRadius = Math.min(w,h) * 0.28;
+    const scattering = state.clicks.length ? performance.now() - state.clicks[state.clicks.length-1].t : 9999;
+    const scatterActive = scattering < 1200;
+
+    for (const p of particles) {
+      const dx = mx - p.x, dy = my - p.y;
+      const dist = Math.hypot(dx, dy) + 0.001;
+      if (state.inside && dist < pushRadius) {
+        const force = (1 - dist/pushRadius) * 0.9;
+        p.vx += (dx/dist) * force;
+        p.vy += (dy/dist) * force;
+      }
+      if (scatterActive) {
+        // Explosion from last click
+        const c = state.clicks[state.clicks.length-1];
+        const cx = c.x * w, cy = c.y * h;
+        const edx = p.x - cx, edy = p.y - cy;
+        const edist = Math.hypot(edx, edy) + 0.001;
+        const pulse = Math.max(0, 1 - scattering/1200);
+        p.vx += (edx/edist) * pulse * 3;
+        p.vy += (edy/edist) * pulse * 3;
+      }
+      // Spring home
+      p.vx += (p.ox - p.x) * 0.04;
+      p.vy += (p.oy - p.y) * 0.04;
+      p.vx *= 0.82; p.vy *= 0.82;
+      p.x += p.vx; p.y += p.vy;
+
+      const d2 = Math.hypot(p.x - mx, p.y - my);
+      const hot = state.inside ? Math.max(0, 1 - d2/pushRadius) : 0;
+      const r = 1.2 + hot * 2.2;
+      if (hot > 0.1) {
+        ctx.fillStyle = `rgba(${RED_R},${RED_G},${RED_B},${0.6 + hot*0.4})`;
+      } else {
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      }
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+    }
+  };
+}
+
+// ── 03 · Ripple: water surface with click drops ──
+function initRipple({ ctx, state }) {
+  const drops = [];
+  let seeded = false;
+  return (t) => {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    if (!seeded) {
+      // Ambient drops to start
+      for (let i = 0; i < 3; i++) drops.push({ x: Math.random()*w, y: Math.random()*h, t: performance.now() - Math.random()*2000 });
+      seeded = true;
+    }
+    // Adopt new clicks
+    while (state.clicks.length) drops.push({ x: state.clicks.shift().x * w, y: 0 * h || 0, t: performance.now() }); // (dummy)
+    // simpler: watch click array length
+    // (Rewrite: seed from state clicks directly)
+
+    // Ambient drop every 2.4s
+    if (Math.random() < 0.006) drops.push({ x: Math.random()*w, y: Math.random()*h, t: performance.now() });
+
+    // Redo to pick up clicks cleanly: we also pull from state.clicks on mousedown above — but they've been consumed.
+    // So hook differently: use state.clicks BEFORE they're cleared. (Don't clear above.)
+    // Actually above: state.clicks.shift() removed them. Restore behavior by reading length here (below).
+
+    // Tilt based on mouse
+    const tiltX = (state.mx - 0.5) * 20;
+    const tiltY = (state.my - 0.5) * 20;
+
+    // Base gradient (dark ink water)
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#06060a');
+    g.addColorStop(1, '#0e0608');
+    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i];
+      const age = (performance.now() - d.t) / 1000;
+      if (age > 3) { drops.splice(i,1); continue; }
+      const life = age / 3;
+      for (let k = 0; k < 4; k++) {
+        const r = (age * 180 + k*30) + tiltX*0.1;
+        const a = (1 - life) * 0.4 * (1 - k*0.22);
+        if (a <= 0) continue;
+        ctx.strokeStyle = `rgba(${RED_R},${RED_G},${RED_B},${a})`;
+        ctx.lineWidth = 1.5 + (1-life)*2;
+        ctx.beginPath(); ctx.arc(d.x + tiltX, d.y + tiltY, r, 0, Math.PI*2); ctx.stroke();
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Cursor aura
+    if (state.inside) {
+      const rg = ctx.createRadialGradient(state.mx*w, state.my*h, 0, state.mx*w, state.my*h, 90);
+      rg.addColorStop(0, 'rgba(255,255,255,0.18)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(state.mx*w, state.my*h, 90, 0, Math.PI*2); ctx.fill();
+    }
+  };
+}
+
+// Better ripple: don't consume clicks globally; each tile has its own.
+// Re-implement setupTile click handling to keep them around (already does, shift only if > 8).
+// Rewrite ripple to read from state.clicks without mutating.
+function initRippleV2({ ctx, state }) {
+  const seen = new Set();
+  const drops = [];
+  // Seed ambient
+  for (let i = 0; i < 3; i++) drops.push({ x: Math.random(), y: Math.random(), t: performance.now() - Math.random()*1500, ambient: true });
+  return (t) => {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+
+    // Pull new clicks
+    state.clicks.forEach(c => {
+      const k = c.t;
+      if (!seen.has(k)) { seen.add(k); drops.push({ x: c.x, y: c.y, t: c.t }); }
+    });
+
+    // Ambient drop
+    if (Math.random() < 0.01) drops.push({ x: Math.random(), y: Math.random(), t: performance.now(), ambient: true });
+
+    const tiltX = (state.mx - 0.5) * 20;
+    const tiltY = (state.my - 0.5) * 20;
+
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#06060a'); g.addColorStop(1, '#0e0608');
+    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i];
+      const age = (performance.now() - d.t) / 1000;
+      const life = age / (d.ambient ? 3.5 : 2.5);
+      if (life > 1) { drops.splice(i,1); continue; }
+      for (let k = 0; k < 4; k++) {
+        const r = (age * 200 + k*36);
+        const a = (1 - life) * (d.ambient ? 0.22 : 0.55) * (1 - k*0.22);
+        if (a <= 0) continue;
+        ctx.strokeStyle = `rgba(${RED_R},${RED_G},${RED_B},${a})`;
+        ctx.lineWidth = 1.2 + (1-life)*2.2;
+        ctx.beginPath(); ctx.arc(d.x*w + tiltX, d.y*h + tiltY, r, 0, Math.PI*2); ctx.stroke();
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    if (state.inside) {
+      const rg = ctx.createRadialGradient(state.mx*w, state.my*h, 0, state.mx*w, state.my*h, 90);
+      rg.addColorStop(0, 'rgba(255,255,255,0.14)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(state.mx*w, state.my*h, 90, 0, Math.PI*2); ctx.fill();
+    }
+  };
+}
+
+// ── 04 · Plasma: line field warped by cursor ──
+function initPlasma({ ctx, state }) {
+  return (t) => {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    ctx.fillStyle = '#05050a'; ctx.fillRect(0,0,w,h);
+
+    const lines = 28;
+    const mx = state.mx, my = state.my;
+    const pull = state.down ? 1.8 : 1.0;
+    ctx.lineWidth = 1.1;
+
+    for (let i = 0; i < lines; i++) {
+      const p = i / (lines - 1); // 0..1
+      ctx.beginPath();
+      for (let x = 0; x <= 1; x += 0.01) {
+        const phase = t * 0.6 + p * 3.2;
+        const dx = x - mx, dy = p - my;
+        const dist = Math.hypot(dx, dy);
+        const warp = Math.exp(-dist*4) * 0.18 * pull;
+        const y = p + Math.sin(phase + x * 6) * 0.04
+                    + Math.sin(phase*1.3 + x*10) * 0.02
+                    - warp * Math.sign(dy);
+        const px = x * w, py = y * h;
+        if (x === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      const glow = Math.exp(-Math.abs(p - my)*3);
+      ctx.strokeStyle = `rgba(${RED_R},${RED_G},${RED_B},${0.25 + glow*0.55})`;
+      ctx.stroke();
+    }
+
+    // Cursor node
+    if (state.inside) {
+      const rg = ctx.createRadialGradient(mx*w, my*h, 0, mx*w, my*h, 70);
+      rg.addColorStop(0, `rgba(${RED_R},${RED_G},${RED_B},0.7)`);
+      rg.addColorStop(1, `rgba(${RED_R},${RED_G},${RED_B},0)`);
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(mx*w, my*h, 70, 0, Math.PI*2); ctx.fill();
+    }
+  };
+}
+
+// ── 05 · Orbits: particles orbit the cursor; click releases them ──
+function initOrbits({ ctx, state }) {
+  const N = 140;
+  const parts = [];
+  for (let i = 0; i < N; i++) {
+    parts.push({
+      a: Math.random() * Math.PI * 2,
+      r: 20 + Math.random() * 200,
+      v: 0.4 + Math.random() * 1.2,
+      size: 1 + Math.random() * 2,
+      free: false,
+      fx: 0, fy: 0, vx: 0, vy: 0,
+    });
+  }
+  const seen = new Set();
+  return (t) => {
+    const w = ctx.canvas.width, h = ctx.canvas.height;
+    const mx = state.mx * w, my = state.my * h;
+
+    // Detect new click -> free nearby
+    state.clicks.forEach(c => {
+      if (seen.has(c.t)) return; seen.add(c.t);
+      parts.forEach(p => {
+        if (!p.free) {
+          p.free = true;
+          p.fx = mx + Math.cos(p.a)*p.r;
+          p.fy = my + Math.sin(p.a)*p.r;
+          p.vx = Math.cos(p.a + Math.PI/2) * p.v * 4;
+          p.vy = Math.sin(p.a + Math.PI/2) * p.v * 4;
+        }
+      });
+      // Re-seed new orbiters so tile never empties
+      setTimeout(() => {
+        parts.forEach(p => {
+          if (p.free) {
+            p.free = false;
+            p.a = Math.random()*Math.PI*2;
+            p.r = 20 + Math.random()*200;
+          }
+        });
+      }, 1800);
+    });
+
+    ctx.fillStyle = 'rgba(5,5,10,0.35)';
+    ctx.fillRect(0,0,w,h);
+
+    parts.forEach(p => {
+      if (!p.free) {
+        p.a += 0.005 * p.v * (state.down ? 2.2 : 1);
+        const x = mx + Math.cos(p.a) * p.r;
+        const y = my + Math.sin(p.a) * p.r;
+        const red = p.r < 120;
+        ctx.fillStyle = red ? `rgba(${RED_R},${RED_G},${RED_B},0.9)` : 'rgba(255,255,255,0.75)';
+        ctx.beginPath(); ctx.arc(x, y, p.size, 0, Math.PI*2); ctx.fill();
+      } else {
+        p.fx += p.vx; p.fy += p.vy;
+        p.vx *= 0.995; p.vy *= 0.995;
+        ctx.fillStyle = `rgba(${RED_R},${RED_G},${RED_B},0.7)`;
+        ctx.beginPath(); ctx.arc(p.fx, p.fy, p.size, 0, Math.PI*2); ctx.fill();
+      }
+    });
+
+    // Central nucleus
+    if (state.inside) {
+      const rg = ctx.createRadialGradient(mx, my, 0, mx, my, 24);
+      rg.addColorStop(0, '#fff');
+      rg.addColorStop(1, `rgba(${RED_R},${RED_G},${RED_B},0)`);
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(mx, my, 24, 0, Math.PI*2); ctx.fill();
+    }
+  };
+}
+
+const inits = { '1': initAurora, '2': initGrid, '3': initRippleV2, '4': initPlasma, '5': initOrbits };
+document.querySelectorAll('.tile').forEach(tile => {
+  const kind = tile.dataset.shader;
+  setupTile(tile, inits[kind]);
+});
+</script>
+</body></html>

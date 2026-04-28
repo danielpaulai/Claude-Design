@@ -1,0 +1,180 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PP — Portraits</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  :root { --fg:#fff; --bg:#0a0a0a; --rail:#1a1a1a; --accent:#e90d41; }
+  html, body { margin:0; padding:0; background:var(--bg); color:var(--fg);
+    font-family:'Inter', sans-serif; }
+  .page { padding: 32px 32px 48px; max-width: 1440px; margin: 0 auto; }
+  .header { display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+    padding-bottom:20px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom:28px; }
+  h1 { font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:42px;
+    letter-spacing:-0.025em; margin:0 0 6px; }
+  .sub { color: rgba(255,255,255,.6); font-size:14px; max-width:560px; line-height:1.5; }
+  .count {
+    display:inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(135deg,#ff2d5e,#e90d41 55%,#a9082f);
+    padding: 10px 16px; border-radius:999px;
+    font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:12px;
+    letter-spacing:0.14em; text-transform:uppercase;
+    box-shadow: 0 4px 20px rgba(233,13,65,.35);
+  }
+  .section { margin-top: 32px; }
+  .section-head { display:flex; align-items:baseline; gap:16px; margin-bottom:14px; }
+  .section-head .tag {
+    font-family:'Rethink Sans', sans-serif; font-weight:800;
+    font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color: #ff8099;
+  }
+  .section-head h2 {
+    margin:0; font-family:'Rethink Sans', sans-serif; font-weight:800;
+    font-size:22px; letter-spacing:-0.015em;
+  }
+  .section-head .note {
+    font-size:12px; color: rgba(255,255,255,.5); margin-left:auto;
+  }
+  .grid {
+    display:grid; grid-template-columns: repeat(5, 1fr); gap:6px;
+  }
+  .cell {
+    position:relative; aspect-ratio: 2/3; overflow:hidden;
+    background:#111; border-radius: 6px;
+  }
+  .img {
+    position:absolute; inset:0;
+    background-size: cover; background-position: center 20%;
+    background-repeat: no-repeat;
+    transition: transform .5s ease;
+  }
+  .cell:hover .img { transform: scale(1.03); }
+  .scrim {
+    position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 35%, transparent 55%);
+    opacity:0; transition: opacity .3s ease;
+  }
+  .cell:hover .scrim { opacity:1; }
+  .label {
+    position:absolute; left:10px; bottom:10px; right:10px;
+    opacity:0; transform: translateY(6px); transition: all .3s ease;
+  }
+  .cell:hover .label { opacity:1; transform: translateY(0); }
+  .name {
+    font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:12px;
+    letter-spacing:-0.005em; color:#fff; line-height:1.2;
+  }
+  .filename {
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:9px; color: rgba(255,255,255,.55); margin-top:2px;
+  }
+  .badge-primary {
+    position:absolute; top:8px; left:8px;
+    font-family:'Rethink Sans', sans-serif; font-weight:800; font-size:9px;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:#fff; padding:3px 7px; border-radius:999px;
+    background: linear-gradient(135deg,#ff2d5e,#e90d41 70%);
+  }
+  /* Wardrobe-specific usage strip */
+  .usage {
+    display:flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 14px;
+  }
+  .chip {
+    font-family: 'Inter', sans-serif; font-size:11px;
+    color: rgba(255,255,255,.7);
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    padding: 4px 10px; border-radius: 999px;
+  }
+</style></head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div>
+      <h1>Founder portrait library</h1>
+      <div class="sub">Four wardrobes · 28 frames. Grey jacket for primary hero &amp; one-pagers; glencheck suit for paid-media, podcast, speaker promo; black tee for everyday LinkedIn; tee &amp; jeans for full-body hooks and video thumbs.</div>
+    </div>
+    <div class="count">28 frames</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <span class="tag">Hero</span>
+      <h2>Grey jacket · editorial</h2>
+      <span class="note">Primary — one-pagers, cover slides, podcast thumbs</span>
+    </div>
+    <div class="usage">
+      <span class="chip">Authority</span><span class="chip">Cover slide</span><span class="chip">One-pager</span>
+    </div>
+    <div class="grid">
+      <div class="cell"><div class="img" style="background-image:url('../assets/daniel-paul-grey-jacket.jpg');"></div><div class="badge-primary">Primary</div><div class="scrim"></div><div class="label"><div class="name">Hands on lapels</div><div class="filename">daniel-paul-grey-jacket.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/grey-jacket-lapel-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Lapel · watch</div><div class="filename">grey-jacket-lapel-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/grey-jacket-hands-clasped-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Hands clasped · watch</div><div class="filename">grey-jacket-hands-clasped-01.jpg</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <span class="tag">Signature</span>
+      <h2>Glencheck suit · three-quarter</h2>
+      <span class="note">9 frames — offer sheets, paid-media, speaker deck covers</span>
+    </div>
+    <div class="usage">
+      <span class="chip">Premium</span><span class="chip">Editorial crop</span><span class="chip">Dark canvas</span>
+    </div>
+    <div class="grid">
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-looking-away-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Looking away · lapel</div><div class="filename">suit-looking-away-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-lapel-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Lapel hold · watch</div><div class="filename">suit-lapel-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-lapel-02.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Lapel · alt</div><div class="filename">suit-lapel-02.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-hands-pocket-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Hands in pockets</div><div class="filename">suit-hands-pocket-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-button-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Buttoning</div><div class="filename">suit-button-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-cuff-detail-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Cuff · looking down</div><div class="filename">suit-cuff-detail-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-open-front-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Open front · full</div><div class="filename">suit-open-front-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-relaxed-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Relaxed · gesturing</div><div class="filename">suit-relaxed-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/suit-looking-away-02.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Looking away · alt</div><div class="filename">suit-looking-away-02.jpg</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <span class="tag">Everyday</span>
+      <h2>Black tee · approachable</h2>
+      <span class="note">12 frames — LinkedIn posts, carousel covers, image posts, CTA</span>
+    </div>
+    <div class="usage">
+      <span class="chip">Direct</span><span class="chip">Carousel cover</span><span class="chip">Image post</span>
+    </div>
+    <div class="grid">
+      <div class="cell"><div class="img" style="background-image:url('../assets/daniel-paul-arms-crossed.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed · hero</div><div class="filename">daniel-paul-arms-crossed.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/daniel-paul-chin-watch.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Chin · watch</div><div class="filename">daniel-paul-chin-watch.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/arms-crossed-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed 01</div><div class="filename">arms-crossed-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/arms-crossed-02.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed 02</div><div class="filename">arms-crossed-02.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/arms-crossed-03.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed 03</div><div class="filename">arms-crossed-03.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/arms-crossed-04.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed 04</div><div class="filename">arms-crossed-04.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/arms-crossed-05.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed 05</div><div class="filename">arms-crossed-05.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/relaxed-front-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Relaxed · front</div><div class="filename">relaxed-front-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/looking-away-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Looking away</div><div class="filename">looking-away-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/looking-away-watch-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Looking away · watch</div><div class="filename">looking-away-watch-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/watch-detail-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Watch detail</div><div class="filename">watch-detail-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/hand-on-chest-01.jpg');"></div><div class="scrim"></div><div class="label"><div class="name">Hand on chest</div><div class="filename">hand-on-chest-01.jpg</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <span class="tag">Casual</span>
+      <h2>Black tee &amp; jeans · full body</h2>
+      <span class="note">4 frames — hook slides, step cards, vertical video thumbs</span>
+    </div>
+    <div class="usage">
+      <span class="chip">Approachable</span><span class="chip">Full-length</span><span class="chip">Hook card</span>
+    </div>
+    <div class="grid">
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/jeans-hands-pockets-01.jpg'); background-position: center 25%;"></div><div class="scrim"></div><div class="label"><div class="name">Hands in pockets</div><div class="filename">jeans-hands-pockets-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/jeans-chin-watch-01.jpg'); background-position: center 25%;"></div><div class="scrim"></div><div class="label"><div class="name">Chin · watch</div><div class="filename">jeans-chin-watch-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/jeans-arms-crossed-01.jpg'); background-position: center 25%;"></div><div class="scrim"></div><div class="label"><div class="name">Arms crossed · full</div><div class="filename">jeans-arms-crossed-01.jpg</div></div></div>
+      <div class="cell"><div class="img" style="background-image:url('../assets/portraits/jeans-gesturing-01.jpg'); background-position: center 25%;"></div><div class="scrim"></div><div class="label"><div class="name">Gesturing · watch</div><div class="filename">jeans-gesturing-01.jpg</div></div></div>
+    </div>
+  </div>
+
+</div>
+</body></html>

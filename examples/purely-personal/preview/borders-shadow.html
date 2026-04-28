@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PP — Borders & shadow</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:26px; background:#fff; font-family:var(--font-body); display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .card { padding:18px; background:#fff; min-height:80px; }
+  .lbl  { font-family:var(--font-heading); font-weight:700; font-size:12px; color:#0a0a0a; letter-spacing:0.04em; text-transform:uppercase; }
+  .val  { font-family: ui-monospace, Menlo, monospace; font-size:11px; color:var(--fg-2); margin-top:4px; }
+</style></head><body>
+  <div class="card" style="border:1px solid #e8eaec"><div class="lbl">Hairline</div><div class="val">1px #e8eaec</div></div>
+  <div class="card" style="border:1px solid #b8bec1"><div class="lbl">Default</div><div class="val">1px #b8bec1 (silver)</div></div>
+  <div class="card" style="border:2px solid #0a0a0a"><div class="lbl">Strong</div><div class="val">2px #0a0a0a · signature look</div></div>
+  <div class="card" style="box-shadow:0 1px 2px rgba(10,10,10,.06),0 4px 12px rgba(10,10,10,.04);border:1px solid #f0f0f1"><div class="lbl">Shadow · soft</div><div class="val">UI chrome only</div></div>
+  <div class="card" style="border:2px solid #0a0a0a;outline:2px solid rgba(233,13,65,.6);outline-offset:2px"><div class="lbl">Focus ring</div><div class="val">2px red @ 60%, 2px offset</div></div>
+  <div class="card" style="border:none;background:#f7f7f8"><div class="lbl">No shadow</div><div class="val">Default — borders do the work</div></div>
+</body></html>

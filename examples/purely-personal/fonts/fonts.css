@@ -1,0 +1,106 @@
+/* Purely Personal — webfont loading
+ *
+ * Rethink Sans: self-hosted from brand-supplied TTFs (variable font,
+ * weights 400-800 upright + italic). This is the source of truth.
+ *
+ * Inter: loaded from Google Fonts CDN. No self-hosted files were
+ * provided; Google ships the exact family (OFL licensed). If a
+ * self-hosted Inter is needed for offline or PDF pipelines, drop
+ * WOFF2/TTF files into fonts/ and replace the @import below with
+ * matching @font-face declarations.
+ */
+
+/* ───────── Rethink Sans (self-hosted variable) ───────── */
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-VariableFont_wght.ttf") format("truetype-variations"),
+       url("RethinkSans-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-Italic-VariableFont_wght.ttf") format("truetype-variations"),
+       url("RethinkSans-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Static fallbacks — older engines that ignore variable ranges still
+   get a usable match at each documented weight. */
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-SemiBoldItalic.ttf") format("truetype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("RethinkSans-ExtraBoldItalic.ttf") format("truetype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ───────── Inter (Google Fonts) ───────── */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");

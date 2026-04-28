@@ -1,0 +1,103 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<title>Purely Personal — One-pager UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #111; font-family: 'Rethink Sans', sans-serif; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 30px 0; box-sizing: border-box; }
+  #stage { transform-origin: center top; box-shadow: 0 20px 80px rgba(0,0,0,.55); }
+  /* Variant switcher */
+  #switcher {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    display: inline-flex; gap: 0; padding: 4px;
+    background: rgba(0,0,0,.75); border-radius: 999px; z-index: 10;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  #switcher button {
+    background: transparent; border: 0; color: rgba(255,255,255,.65);
+    font-family: 'Rethink Sans', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 10px 18px; border-radius: 999px; cursor: pointer;
+  }
+  #switcher button.active {
+    background: linear-gradient(135deg, #ff2d5e, #e90d41 55%, #a9082f);
+    color: #fff; box-shadow: 0 4px 16px rgba(233,13,65,.4);
+  }
+</style>
+</head>
+<body>
+<div id="switcher">
+  <button id="btn-light" class="active">01 · Paper</button>
+  <button id="btn-dark">02 · Black</button>
+</div>
+
+<div id="stage" data-screen-label="One-pager"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="OnePagerFrame.jsx"></script>
+<script type="text/babel" src="OfferHero.jsx"></script>
+<script type="text/babel" src="ProofRow.jsx"></script>
+<script type="text/babel" src="InclusionsList.jsx"></script>
+<script type="text/babel" src="CTAFooter.jsx"></script>
+
+<script type="text/babel">
+  function OnePager({ variant }) {
+    return (
+      <OnePagerFrame variant={variant}>
+        <OfferHero
+          variant={variant}
+          eyebrow="The 2026 Content Engine"
+          title="Your LinkedIn. On autopilot. Two hours a week."
+          accent="Two hours a week."
+          subtitle="A 4-week build. You leave with 5 Claude Skills, a 90-day calendar, and a voice Claude writes in. Yours forever."
+        />
+        <ProofRow variant={variant} items={[
+          { value: "12h → 2h", label: "Weekly hours on content" },
+          { value: "90 days",  label: "Of content planned in one sitting" },
+          { value: "5 Skills", label: "In your Claude account, yours to keep" },
+        ]} />
+        <InclusionsList variant={variant} title="You will own:" items={[
+          { title: "Voice DNA",                  body: "A document Claude reads before every draft so posts sound like you, not like a LinkedIn bot." },
+          { title: "ICP & positioning",          body: "Who you serve, what you sell, what you stand against. The brief every skill reads from." },
+          { title: "5 Claude Skills",            body: "Strategist, Writer, Designer, Editor, Analyst. Each with a defined role and a working prompt." },
+          { title: "90-day content calendar",    body: "Mapped to business outcomes. Campaigns and workshops layered on top." },
+          { title: "Weekly production workflow", body: "Planning day, writing day, scheduling day. Three sessions. Two hours each. Done." },
+        ]} />
+        <CTAFooter
+          variant={variant}
+          ctaLabel="Book the intro call"
+          ctaSub="30 minutes. You leave with the outline of your own content engine, whether we work together or not."
+        />
+      </OnePagerFrame>
+    );
+  }
+
+  const stage = document.getElementById("stage");
+  const root = ReactDOM.createRoot(stage);
+
+  let variant = localStorage.getItem("pp_onepager_variant") || "light";
+
+  function render() {
+    localStorage.setItem("pp_onepager_variant", variant);
+    document.getElementById("btn-light").classList.toggle("active", variant === "light");
+    document.getElementById("btn-dark").classList.toggle("active", variant === "dark");
+    root.render(<OnePager variant={variant} />);
+  }
+
+  document.getElementById("btn-light").onclick = () => { variant = "light"; render(); };
+  document.getElementById("btn-dark").onclick  = () => { variant = "dark";  render(); };
+
+  function fit() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const s = Math.min(w / 2480, (h - 80) / 3508) * 0.95;
+    stage.style.transform = `scale(${s})`;
+  }
+  window.addEventListener("resize", fit); fit();
+
+  render();
+</script>
+</body></html>

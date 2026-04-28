@@ -1,0 +1,59 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<title>Purely Personal — Image-post UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #222; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  #stage { transform-origin: center center; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+  #toggle {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; background: rgba(0,0,0,.7); padding: 6px; border-radius: 999px; z-index: 10;
+  }
+  #toggle button { background: transparent; color: #fff; border: 0; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    font-family: 'Rethink Sans', sans-serif; font-weight: 700; font-size: 13px; }
+  #toggle button.on { background: #e90d41; }
+</style>
+</head>
+<body>
+<div id="stage" data-screen-label="Image post"></div>
+<div id="toggle">
+  <button id="btn-portrait" class="on">Portrait</button>
+  <button id="btn-text">Text-only</button>
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="LinkedInAuthorCard.jsx"></script>
+<script type="text/babel" src="PortraitStatement.jsx"></script>
+<script type="text/babel" src="TextStatement.jsx"></script>
+
+<script type="text/babel">
+  const stage = document.getElementById("stage");
+  const root = ReactDOM.createRoot(stage);
+  let mode = localStorage.getItem("pp_imgpost_mode") || "portrait";
+  function render() {
+    localStorage.setItem("pp_imgpost_mode", mode);
+    document.getElementById("btn-portrait").classList.toggle("on", mode === "portrait");
+    document.getElementById("btn-text").classList.toggle("on", mode === "text");
+    root.render(
+      mode === "portrait"
+        ? <PortraitStatement headline="If your LinkedIn reach dropped in 2026, this is why (it's not your content quality)" />
+        : <TextStatement eyebrow="The new default" headline="12 hours a week on content. Down to 2." accent="Down to 2." />
+    );
+  }
+  document.getElementById("btn-portrait").onclick = () => { mode="portrait"; render(); };
+  document.getElementById("btn-text").onclick     = () => { mode="text"; render(); };
+  render();
+
+  function fit() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const s = Math.min(w / 1080, (h - 80) / 1350) * 0.95;
+    stage.style.transform = `scale(${s})`;
+  }
+  window.addEventListener("resize", fit); fit();
+</script>
+</body></html>

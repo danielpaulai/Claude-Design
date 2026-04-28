@@ -1,0 +1,155 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<title>Purely Personal — Carousel UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #111; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  #stage {
+    position: relative;
+    width: 1080px; height: 1350px;
+    background: #0a0a0a;
+    overflow: hidden;
+    transform-origin: center center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  }
+  #nav {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 12px; align-items: center;
+    background: rgba(0,0,0,.7); padding: 10px 16px; border-radius: 999px; z-index: 10;
+    font-family: 'Rethink Sans', sans-serif; color: #fff;
+  }
+  #nav button { background: #e90d41; color: #fff; border: 0; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-weight: 700; font-family: inherit; }
+  #nav button[disabled] { opacity: .4; cursor: default; }
+  #counter { font-size: 13px; letter-spacing: 0.04em; min-width: 56px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="stage" data-screen-label="Carousel"></div>
+<div id="nav">
+  <button id="prev">‹ Prev</button>
+  <span id="counter">1 / 10</span>
+  <button id="next">Next ›</button>
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="SlideFooter.jsx"></script>
+<script type="text/babel" src="CoverSlide.jsx"></script>
+<script type="text/babel" src="HookSlide.jsx"></script>
+<script type="text/babel" src="StepSlide.jsx"></script>
+<script type="text/babel" src="CTASlide.jsx"></script>
+
+<script type="text/babel">
+  const total = 10;
+  const slides = [
+    () => <CoverSlide
+      eyebrow="A 7-step system"
+      title="I planned 90 days of content in two hours."
+      accentWords={["two hours"]}
+      subtitle="And I never have to guess what to post again."
+    />,
+    () => <HookSlide
+      eyebrow="The real problem"
+      title="Week 1 feels great. Week 3 you're staring at a blank screen."
+      accentWords={["blank screen"]}
+      body="The problem is not motivation. It's the absence of a plan."
+    />,
+    () => <StepSlide
+      stepNum={1}
+      eyebrow="Step 01 · Why you run out of ideas"
+      title="You're posting to create content. Not to build a business."
+      body="Content without a goal is theatre. Every post should move a founder one step closer to a call."
+    />,
+    () => <StepSlide
+      stepNum={2}
+      eyebrow="Step 02 · Define content goals"
+      title="Connect the calendar to business outcomes."
+      prompt="Define my content goals for 90 days. My business: what I do, who I serve, what I sell."
+      outcome="Clear objectives tied to revenue, day 30/60/90 milestones."
+    />,
+    () => <StepSlide
+      stepNum={3}
+      eyebrow="Step 03 · Build 5 pillars"
+      title="Every post falls under one of five pillars."
+      body="Authority 30%. Problem-solving 25%. Proof 20%. Offer-awareness 15%. Personality 10%."
+      prompt="Build 5 content pillars for my 90-day calendar based on my goals."
+    />,
+    () => <StepSlide
+      stepNum={4}
+      eyebrow="Step 04 · Generate 90 days"
+      title="One sitting. 39 to 90 post ideas."
+      prompt="Create a 90-day calendar using my pillars and goals. Table format: Week · Day · Pillar · Topic · Hook · Angle."
+      outcome="A complete schedule, ready to copy into Google Sheets."
+    />,
+    () => <HookSlide
+      eyebrow="The result"
+      title="12 hours a week on content became 2."
+      accentWords={["2"]}
+      body="Same output. Better hooks. Pipeline that does not go quiet when life gets busy."
+    />,
+    () => <StepSlide
+      stepNum={5}
+      eyebrow="Step 05 · Campaigns on top"
+      title="Overlay launches, workshops, and offers."
+      body="Claude builds 2-week pre, event-day, and 1-week-after sequences automatically."
+    />,
+    () => <StepSlide
+      stepNum={6}
+      eyebrow="Step 06 · Weekly workflow"
+      title="One planning day. One writing day. One scheduling day."
+      body="Three sessions. Two hours each. Your month is done."
+    />,
+    () => <CTASlide
+      title="Want the full 7-step prompt pack?"
+      keyword="AI"
+      ps="Have you ever planned content more than two weeks ahead?"
+    />,
+  ];
+
+  function Slide({ idx }) {
+    const S = slides[idx];
+    const isCover = idx === 0;
+    return (
+      <div style={{ position: "absolute", inset: 0 }}>
+        <S />
+        {!isCover && <SlideFooter slideNum={idx + 1} total={total} />}
+      </div>
+    );
+  }
+
+  const stage = document.getElementById("stage");
+  const root = ReactDOM.createRoot(stage);
+
+  let cur = parseInt(localStorage.getItem("pp_carousel_idx") || "0", 10);
+  if (isNaN(cur) || cur < 0 || cur >= total) cur = 0;
+
+  function render() {
+    localStorage.setItem("pp_carousel_idx", String(cur));
+    document.getElementById("counter").textContent = `${cur + 1} / ${total}`;
+    document.getElementById("prev").disabled = cur === 0;
+    document.getElementById("next").disabled = cur === total - 1;
+    root.render(<Slide idx={cur} />);
+  }
+
+  document.getElementById("prev").onclick = () => { if (cur > 0) { cur--; render(); } };
+  document.getElementById("next").onclick = () => { if (cur < total - 1) { cur++; render(); } };
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft" && cur > 0) { cur--; render(); }
+    if (e.key === "ArrowRight" && cur < total - 1) { cur++; render(); }
+  });
+
+  // Scale to fit viewport
+  function fit() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const s = Math.min(w / 1080, (h - 80) / 1350) * 0.95;
+    stage.style.transform = `scale(${s})`;
+  }
+  window.addEventListener("resize", fit); fit();
+
+  render();
+</script>
+</body></html>

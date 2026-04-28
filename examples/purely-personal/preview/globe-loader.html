@@ -1,0 +1,260 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PP — Globe loader</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  :root { --red:#e90d41; --ink:#0a0a0a; }
+  html, body { margin:0; padding:0; background: #050508; min-height:100vh;
+               display:flex; align-items:center; justify-content:center;
+               font-family:'Inter',sans-serif; color:#fafafa; }
+
+  /* Star field backdrop */
+  body::before {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.7), transparent 50%),
+      radial-gradient(1px 1px at 22% 62%, rgba(255,255,255,0.5), transparent 50%),
+      radial-gradient(1.5px 1.5px at 38% 8%, rgba(255,255,255,0.8), transparent 50%),
+      radial-gradient(1px 1px at 55% 35%, rgba(255,255,255,0.4), transparent 50%),
+      radial-gradient(1px 1px at 72% 74%, rgba(255,255,255,0.6), transparent 50%),
+      radial-gradient(1.5px 1.5px at 88% 22%, rgba(255,255,255,0.7), transparent 50%),
+      radial-gradient(1px 1px at 8% 88%, rgba(255,255,255,0.5), transparent 50%),
+      radial-gradient(1px 1px at 92% 92%, rgba(255,255,255,0.4), transparent 50%),
+      radial-gradient(1px 1px at 46% 92%, rgba(255,255,255,0.6), transparent 50%),
+      radial-gradient(1px 1px at 66% 12%, rgba(255,255,255,0.5), transparent 50%);
+  }
+
+  .stage {
+    width: 360px; height: 360px;
+    position: relative; display: grid; place-items: center;
+    perspective: 1400px; z-index:1;
+  }
+
+  /* ── Atmospheric red glow ── */
+  .atmosphere {
+    position:absolute; width:340px; height:340px; border-radius:50%;
+    background: radial-gradient(circle at 50% 50%,
+      transparent 46%,
+      rgba(233,13,65,0.18) 50%,
+      rgba(233,13,65,0.10) 56%,
+      transparent 68%);
+    filter: blur(2px);
+    animation: atmos 4s ease-in-out infinite;
+  }
+  @keyframes atmos {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+
+  /* ── Globe body ── */
+  .globe {
+    position: relative;
+    width: 280px; height: 280px; border-radius: 50%;
+    transform-style: preserve-3d;
+    background:
+      radial-gradient(circle at 30% 26%,
+        #1c1c22 0%,
+        #101014 30%,
+        #070709 65%,
+        #020204 100%);
+    box-shadow:
+      inset -40px -40px 80px rgba(0,0,0,0.85),
+      inset 25px 30px 60px rgba(233,13,65,0.08),
+      inset 0 0 30px rgba(0,0,0,0.5),
+      0 20px 60px rgba(233,13,65,0.15),
+      0 0 100px rgba(233,13,65,0.08);
+    overflow: hidden;
+  }
+
+  /* Specular shine */
+  .globe::before {
+    content:""; position:absolute;
+    left: 14%; top: 10%;
+    width: 40%; height: 28%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 40%,
+      rgba(255,255,255,0.22) 0%,
+      rgba(255,255,255,0.08) 40%,
+      transparent 75%);
+    filter: blur(4px);
+    pointer-events:none; z-index: 5;
+  }
+
+  /* Terminator shadow (night side) */
+  .globe::after {
+    content:""; position:absolute; inset:0; border-radius:50%;
+    background: radial-gradient(ellipse at 75% 70%,
+      rgba(0,0,0,0.7) 0%,
+      rgba(0,0,0,0.35) 35%,
+      transparent 60%);
+    pointer-events:none; z-index: 4;
+  }
+
+  /* ── Rotating map layer ── */
+  .map-wrap {
+    position:absolute; inset:0;
+    /* Round mask so landmasses clip to the sphere */
+    -webkit-mask: radial-gradient(circle at 50% 50%, #000 48%, transparent 50%);
+            mask: radial-gradient(circle at 50% 50%, #000 48%, transparent 50%);
+    z-index: 2;
+  }
+  .scroll {
+    position:absolute; top:0; bottom:0; left:0;
+    width: 200%; display:flex;
+    animation: spin 24s linear infinite;
+  }
+  @keyframes spin {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .world { width: 50%; height: 100%; position: relative; }
+  .world svg { width:100%; height:100%; display:block; }
+
+  /* Shading applied to the globe to simulate sphere curvature on landmasses:
+     Use a CSS filter overlay that darkens the left/right edges (limb darkening) */
+  .limb {
+    position:absolute; inset:0; border-radius:50%;
+    background:
+      radial-gradient(ellipse at 50% 50%,
+        transparent 30%,
+        rgba(0,0,0,0.15) 60%,
+        rgba(0,0,0,0.55) 85%,
+        rgba(0,0,0,0.8) 100%);
+    pointer-events:none; z-index:3;
+    mix-blend-mode: multiply;
+  }
+
+  /* Landmass styling */
+  .land {
+    fill: var(--red);
+    opacity: 0.88;
+    filter: drop-shadow(0 0 2px rgba(233,13,65,0.4));
+  }
+
+  /* Graticule (lat/lng) drawn as ellipses to suggest sphere curvature */
+  .graticule { position:absolute; inset:0; pointer-events:none; z-index:3; }
+  .graticule svg { width:100%; height:100%; display:block; }
+  .graticule path { fill:none; stroke: rgba(255,255,255,0.06); stroke-width:0.5; }
+  .graticule .equator { stroke: rgba(233,13,65,0.25); stroke-width: 0.8; }
+
+  /* Rim highlight (atmosphere glow on the edge) */
+  .rim {
+    position:absolute; inset:-2px; border-radius:50%;
+    box-shadow:
+      inset 0 0 2px rgba(255,255,255,0.15),
+      inset 0 0 20px rgba(233,13,65,0.25);
+    pointer-events:none; z-index:6;
+  }
+
+  /* Orbiting ping dots to suggest "real-time" */
+  .orbit {
+    position:absolute; inset:-30px; border-radius:50%;
+    animation: orbit-spin 18s linear infinite;
+    pointer-events:none; z-index: 7;
+  }
+  .orbit.slow { animation-duration: 28s; animation-direction: reverse; }
+  .ping {
+    position:absolute; width:8px; height:8px; border-radius:50%;
+    background: var(--red);
+    box-shadow: 0 0 8px var(--red), 0 0 16px rgba(233,13,65,0.5);
+  }
+  .ping.a { top:10%; left:50%; transform:translate(-50%,-50%); }
+  .ping.b { top:50%; left:95%; transform:translate(-50%,-50%); width:5px; height:5px; }
+  .ping.c { top:78%; left:20%; transform:translate(-50%,-50%); width:6px; height:6px; }
+  @keyframes orbit-spin { to { transform: rotate(360deg); } }
+
+  /* Caption */
+  .caption {
+    position:absolute; bottom: -80px; left:50%; transform: translateX(-50%);
+    text-align:center; white-space:nowrap;
+  }
+  .caption .dots { color: var(--red); letter-spacing: .4em; font-weight: 800; font-family: 'Rethink Sans', sans-serif; font-size: 11px; }
+  .caption .label {
+    font-family: 'Rethink Sans', sans-serif; font-weight: 800; font-size: 11px;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55); margin-top: 8px;
+  }
+  .caption .dots span { display:inline-block; animation: dotp 1.4s infinite; }
+  .caption .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .caption .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotp { 0%,100%{opacity:.25} 50%{opacity:1} }
+</style>
+</head>
+<body>
+  <div class="stage" aria-label="Loading">
+    <div class="atmosphere"></div>
+
+    <div class="globe" role="img" aria-label="Rotating globe">
+      <!-- Rotating landmass layer -->
+      <div class="map-wrap">
+        <div class="scroll">
+          <div class="world"><svg viewBox="0 0 360 180" preserveAspectRatio="none"><use href="#continents"/></svg></div>
+          <div class="world"><svg viewBox="0 0 360 180" preserveAspectRatio="none"><use href="#continents"/></svg></div>
+        </div>
+      </div>
+
+      <!-- Graticule (curved latitude/longitude lines) -->
+      <div class="graticule">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <!-- Longitude lines as ellipses narrowing toward center -->
+          <ellipse cx="50" cy="50" rx="48" ry="48"/>
+          <ellipse cx="50" cy="50" rx="40" ry="48"/>
+          <ellipse cx="50" cy="50" rx="28" ry="48"/>
+          <ellipse cx="50" cy="50" rx="14" ry="48"/>
+          <line x1="50" y1="2" x2="50" y2="98" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+          <!-- Latitude lines as horizontal ellipses -->
+          <ellipse cx="50" cy="50" rx="48" ry="40"/>
+          <ellipse cx="50" cy="50" rx="48" ry="28"/>
+          <ellipse cx="50" cy="50" rx="48" ry="14"/>
+          <!-- Equator in red -->
+          <line class="equator" x1="2" y1="50" x2="98" y2="50"/>
+        </svg>
+      </div>
+
+      <!-- Limb darkening (edge shadow for curvature) -->
+      <div class="limb"></div>
+
+      <!-- Rim atmosphere -->
+      <div class="rim"></div>
+    </div>
+
+    <!-- Orbiting pings -->
+    <div class="orbit"><div class="ping a"></div></div>
+    <div class="orbit slow"><div class="ping b"></div><div class="ping c"></div></div>
+
+    <div class="caption">
+      <div class="dots"><span>●</span><span>●</span><span>●</span></div>
+      <div class="label">Connecting worldwide</div>
+    </div>
+  </div>
+
+  <!-- Continent path definitions (Natural Earth approximated, equirectangular 360x180) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="continents">
+        <g class="land">
+          <path d="M18,46 L30,36 L48,30 L68,28 L82,34 L96,34 L108,42 L112,52 L108,60 L94,66 L86,74 L78,78 L70,72 L60,74 L52,84 L46,86 L40,82 L38,72 L32,66 L24,62 L20,56 Z"/>
+          <path d="M70,92 L82,94 L92,100 L96,106 L90,108 L82,104 L72,98 Z"/>
+          <path d="M92,108 L108,106 L118,112 L124,122 L124,136 L118,150 L110,160 L100,164 L94,158 L92,146 L88,134 L86,122 Z"/>
+          <path d="M120,22 L140,16 L156,20 L158,32 L150,40 L134,42 L122,36 Z"/>
+          <path d="M168,44 L182,38 L196,38 L208,40 L216,46 L218,54 L210,58 L198,60 L186,58 L176,56 L170,52 Z"/>
+          <path d="M168,48 L174,46 L176,52 L172,56 L166,54 Z"/>
+          <path d="M200,28 L214,26 L222,34 L216,42 L206,42 L200,36 Z"/>
+          <path d="M186,78 L208,76 L224,82 L232,96 L232,112 L226,126 L218,138 L210,146 L202,146 L194,138 L188,124 L184,110 L184,92 Z"/>
+          <path d="M232,86 L248,82 L256,90 L252,102 L242,104 L234,98 Z"/>
+          <path d="M222,62 L240,58 L258,60 L272,66 L278,74 L270,80 L256,82 L242,78 L228,74 Z"/>
+          <path d="M224,34 L250,26 L282,22 L312,24 L336,28 L344,36 L340,46 L322,50 L300,52 L278,52 L256,52 L238,50 L226,46 Z"/>
+          <path d="M272,82 L284,80 L290,88 L288,100 L282,104 L278,96 L272,88 Z"/>
+          <path d="M296,82 L310,82 L318,88 L316,96 L306,98 L298,92 Z"/>
+          <path d="M298,54 L322,52 L334,58 L334,68 L324,74 L310,74 L300,68 Z"/>
+          <path d="M340,62 L346,60 L350,66 L348,72 L342,70 Z"/>
+          <path d="M294,104 L310,102 L322,106 L330,110 L320,114 L306,114 L296,110 Z"/>
+          <path d="M302,128 L322,124 L336,128 L342,138 L336,148 L320,150 L306,146 L300,138 Z"/>
+          <path d="M348,148 L352,146 L354,152 L350,156 Z"/>
+          <path d="M238,126 L242,124 L244,134 L240,140 L238,134 Z"/>
+          <path d="M160,38 L168,36 L170,42 L162,44 Z"/>
+        </g>
+      </g>
+    </defs>
+  </svg>
+</body></html>

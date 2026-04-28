@@ -363,6 +363,70 @@
       .steps-section-title { font-size: 36px; }
     }
 
+    /* ============ Brand presets grid ============ */
+    .brand-presets-wrap {
+      margin-top: 8px;
+      padding: 16px;
+      background: var(--color-off-white);
+      border: 1px solid var(--color-gray-100);
+      border-radius: 8px;
+    }
+    .brand-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .brand-preset {
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-100);
+      border-radius: 6px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color 120ms, transform 120ms;
+      font-family: var(--font-body);
+    }
+    .brand-preset:hover {
+      border-color: var(--color-near-black);
+      transform: translateY(-1px);
+    }
+    .brand-preset.selected {
+      border-color: var(--color-red);
+      border-width: 2px;
+      background: var(--color-off-white);
+    }
+    .brand-preset-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-preset-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    .brand-preset-name {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--color-near-black);
+      letter-spacing: -0.005em;
+    }
+    .brand-preset-family {
+      font-family: var(--font-body);
+      font-size: 10px;
+      color: var(--color-gray-500);
+      letter-spacing: 0.02em;
+    }
+    @media (max-width: 700px) {
+      .brand-presets-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
     .header { margin-bottom: 56px; }
     .eyebrow {
       display: inline-block;
@@ -691,8 +755,18 @@
         <div class="section-body">
 
           <div class="field">
-            <label class="label" for="family"><span class="q-num">6.</span>Pick one aesthetic family</label>
-            <p class="hint">You can change later. Pick the closest.</p>
+            <label class="label">
+              <span class="q-num" style="color: var(--color-red); font-family: var(--font-mono); font-size: 12px;">⚡</span>Quick start: pick a popular brand <span class="opt">(optional)</span>
+            </label>
+            <p class="hint">Click any brand to apply its family and accent. You can still customize after. Or skip and pick a family below manually.</p>
+            <div class="brand-presets-wrap">
+              <div class="brand-presets-grid" id="brand-presets-grid"></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="family"><span class="q-num">6.</span>Or pick one aesthetic family manually</label>
+            <p class="hint">9 families. Pick the closest. (The brand presets above auto-set this for you.)</p>
             <select id="family" name="family">
               <option value="">— pick one —</option>
               <option value="Editorial Minimal">Editorial Minimal — calm neutrals, big type (Linear, Stripe, Vercel)</option>
@@ -1328,6 +1402,92 @@ Two questions:
     });
 
     updatePreview();
+
+    /* ============ Brand presets ============ */
+    const BRAND_PRESETS = [
+      // Editorial Minimal — calm sans, surgical density
+      { name: 'Linear',     family: 'Editorial Minimal',     accent: '#5e6ad2' },
+      { name: 'Stripe',     family: 'Editorial Minimal',     accent: '#635bff' },
+      { name: 'Vercel',     family: 'Editorial Minimal',     accent: '#000000' },
+      { name: 'Notion',     family: 'Editorial Minimal',     accent: '#0070f3' },
+      // Warm Editorial — cream + serif
+      { name: 'Claude',     family: 'Warm Editorial',        accent: '#cc785c' },
+      { name: 'Substack',   family: 'Warm Editorial',        accent: '#ff6719' },
+      { name: 'Medium',     family: 'Warm Editorial',        accent: '#1a8917' },
+      { name: 'Resend',     family: 'Warm Editorial',        accent: '#000000' },
+      // Terminal Core — mono, dark, IDE
+      { name: 'Warp',       family: 'Terminal Core',         accent: '#00ff95' },
+      { name: 'Raycast',    family: 'Terminal Core',         accent: '#ff6363' },
+      { name: 'Ollama',     family: 'Terminal Core',         accent: '#d4ff00' },
+      { name: 'GitHub',     family: 'Terminal Core',         accent: '#6366f1' },
+      // Data-Dense Pro — charts, low chrome
+      { name: 'ClickHouse', family: 'Data-Dense Pro',        accent: '#ffcc01' },
+      { name: 'PostHog',    family: 'Data-Dense Pro',        accent: '#1d4aff' },
+      { name: 'Grafana',    family: 'Data-Dense Pro',        accent: '#f46800' },
+      { name: 'Datadog',    family: 'Data-Dense Pro',        accent: '#632ca6' },
+      // Cinematic Dark — black canvas, hero
+      { name: 'NVIDIA',     family: 'Cinematic Dark',        accent: '#76b900' },
+      { name: 'RunwayML',   family: 'Cinematic Dark',        accent: '#ff5e3a' },
+      { name: 'ElevenLabs', family: 'Cinematic Dark',        accent: '#ffd166' },
+      { name: 'SpaceX',     family: 'Cinematic Dark',        accent: '#ffffff' },
+      // Playful Color — saturated, motion
+      { name: 'Figma',      family: 'Playful Color',         accent: '#0acf83' },
+      { name: 'Duolingo',   family: 'Playful Color',         accent: '#58cc02' },
+      { name: 'Toss',       family: 'Playful Color',         accent: '#3182f6' },
+      { name: 'Spotify',    family: 'Playful Color',         accent: '#1ed760' },
+      // Glass / Soft-Futurism
+      { name: 'Apple',      family: 'Glass / Soft-Futurism', accent: '#0066cc' },
+      { name: 'Arc',        family: 'Glass / Soft-Futurism', accent: '#fa6f10' },
+      { name: 'Airbnb',     family: 'Glass / Soft-Futurism', accent: '#ff5a5f' },
+      { name: 'Tesla',      family: 'Glass / Soft-Futurism', accent: '#cc0000' },
+      // Neon Brutalist — loud
+      { name: 'Nike',       family: 'Neon Brutalist',        accent: '#ff5e1f' },
+      { name: 'Pitchfork',  family: 'Neon Brutalist',        accent: '#ff0048' },
+      { name: 'The Verge',  family: 'Neon Brutalist',        accent: '#5200ff' },
+      { name: 'PlayStation',family: 'Neon Brutalist',        accent: '#003791' },
+      // Cult / Indie — quiet weirdness
+      { name: 'A24',        family: 'Cult / Indie',          accent: '#000000' },
+      { name: 'Criterion',  family: 'Cult / Indie',          accent: '#c41e3a' },
+      { name: 'Obsidian',   family: 'Cult / Indie',          accent: '#483699' },
+      { name: 'Are.na',     family: 'Cult / Indie',          accent: '#272727' }
+    ];
+
+    function renderBrandPresets() {
+      const grid = document.getElementById('brand-presets-grid');
+      if (!grid) return;
+      grid.innerHTML = BRAND_PRESETS.map(p => `
+        <button type="button" class="brand-preset" data-family="${p.family}" data-accent="${p.accent}">
+          <div class="brand-preset-row">
+            <span class="brand-preset-swatch" style="background:${p.accent}"></span>
+            <span class="brand-preset-name">${p.name}</span>
+          </div>
+          <span class="brand-preset-family">${p.family}</span>
+        </button>
+      `).join('');
+    }
+    renderBrandPresets();
+
+    document.getElementById('brand-presets-grid').addEventListener('click', (e) => {
+      const btn = e.target.closest('.brand-preset');
+      if (!btn) return;
+      const family = btn.dataset.family;
+      const accent = btn.dataset.accent;
+      // Apply family to dropdown
+      const familyEl = document.getElementById('family');
+      familyEl.value = family;
+      familyEl.dispatchEvent(new Event('change', { bubbles: true }));
+      // Apply accent to input
+      const accentEl = document.getElementById('accent');
+      accentEl.value = accent;
+      accentEl.dispatchEvent(new Event('input', { bubbles: true }));
+      // Mark this preset as selected
+      document.querySelectorAll('.brand-preset.selected').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      // Save and update preview
+      save();
+      updatePreview();
+      showStatus(btn.querySelector('.brand-preset-name').textContent + ' applied');
+    });
 
     /* ============ Copy-prompt buttons (step walkthrough) ============ */
     document.querySelectorAll('.copy-prompt-btn').forEach(btn => {

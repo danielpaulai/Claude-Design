@@ -1,0 +1,18 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PP — Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#fff; font-family:var(--font-body); display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+  .btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-heading); font-weight:700; font-size:14px; letter-spacing:0.01em; padding:10px 18px; border-radius:999px; cursor:pointer; border:none; }
+  .primary { background:#e90d41; color:#fff; }
+  .inverse { background:#0a0a0a; color:#fff; }
+  .ghost { background:transparent; color:#0a0a0a; border:2px solid #0a0a0a; padding:8px 16px; }
+  .link { background:none; color:#e90d41; font-weight:600; border:none; text-decoration:underline; text-underline-offset:3px; }
+  .ic { width:14px; height:14px; border:2px solid currentColor; border-radius:999px; position:relative; }
+</style></head><body>
+  <button class="btn primary"><span class="ic"></span>Repost</button>
+  <button class="btn primary">Comment "TEAM"</button>
+  <button class="btn inverse">Download offer</button>
+  <button class="btn ghost">Read the post</button>
+  <button class="btn link">View all 30 posts</button>
+</body></html>
