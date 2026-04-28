@@ -8,7 +8,13 @@ Built for the [Purely Personal workshop](https://purely-personal-workshop.vercel
 
 [**Code-flavored prompts (PDF)**](https://claude-design-beginners.vercel.app/handout-five-prompts.pdf) · [**Claude Design prompts (PDF)**](https://claude-design-beginners.vercel.app/handout-claude-design.pdf) · [**Workshop flow**](docs/workshop-flow.md)
 
-![Brand In A Box demo — fill the form, watch your brand appear, generate the prompt](docs/demo.gif)
+---
+
+## Watch the 60-second explainer
+
+![Claude Design — 60-second explainer](docs/explainer-preview.gif)
+
+[**▶ Full 60-second video (MP4, 1.3 MB)**](docs/explainer.mp4) · [**Full GIF (3.2 MB)**](docs/explainer-full.gif) · [**Source HTML**](scripts/explainer.html) · [**Re-render with Playwright**](scripts/record-video-demo.js)
 
 ---
 
