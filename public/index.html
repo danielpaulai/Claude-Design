@@ -1195,6 +1195,33 @@ Two questions:
         .map(cb => '- ' + cb.value)
         .join('\n') || '- (none ticked yet — pick at least one)';
 
+      // Compose the brand reference block (only if a brand preset was clicked)
+      const brandRefBlock = selectedBrand ? [
+        "",
+        "═══ BRAND REFERENCE ═══",
+        "",
+        "I clicked " + selectedBrand.name + " in the brand presets. Use it as my",
+        "visual and tonal direction — apply its energy to MY business below, in",
+        "MY voice. This is direction, not duplication.",
+        "",
+        "  Reference brand:    " + selectedBrand.name,
+        "  Family:             " + selectedBrand.family,
+        "  Accent color:       " + selectedBrand.accent + "  (" + selectedBrand.name + "'s actual brand color)",
+        "  Heading font:       " + selectedBrand.heading,
+        "  Body font:          " + selectedBrand.body,
+        "",
+        "  Visual signature:",
+        "    " + selectedBrand.signature,
+        "",
+        "  Voice tone hint:",
+        "    " + selectedBrand.voice,
+        "",
+        "Translate this signature to my brand. Don't copy " + selectedBrand.name + " literally —",
+        "use its rhythm, its density, its accent discipline, its tonal register, applied",
+        "to my business and my voice samples (below).",
+        ""
+      ] : [];
+
       const prompt = [
         "You are my brand-in-a-box system inside Claude Design.",
         "",
@@ -1205,7 +1232,7 @@ Two questions:
         "2. Apply the aesthetic family in Q6 — set canvas color, fonts, accent ratio,",
         "   corner radius, border style.",
         "3. Lock these as the design system for every visual we make in this conversation.",
-        "",
+        ...brandRefBlock,
         "═══ HARD RULES (every artifact, no exceptions) ═══",
         "",
         "- The accent color appears at most ONCE per visible frame, on a verb,",
@@ -1403,54 +1430,172 @@ Two questions:
 
     updatePreview();
 
-    /* ============ Brand presets ============ */
+    /* ============ Brand presets — full DNA per brand ============ */
     const BRAND_PRESETS = [
-      // Editorial Minimal — calm sans, surgical density
-      { name: 'Linear',     family: 'Editorial Minimal',     accent: '#5e6ad2' },
-      { name: 'Stripe',     family: 'Editorial Minimal',     accent: '#635bff' },
-      { name: 'Vercel',     family: 'Editorial Minimal',     accent: '#000000' },
-      { name: 'Notion',     family: 'Editorial Minimal',     accent: '#0070f3' },
-      // Warm Editorial — cream + serif
-      { name: 'Claude',     family: 'Warm Editorial',        accent: '#cc785c' },
-      { name: 'Substack',   family: 'Warm Editorial',        accent: '#ff6719' },
-      { name: 'Medium',     family: 'Warm Editorial',        accent: '#1a8917' },
-      { name: 'Resend',     family: 'Warm Editorial',        accent: '#000000' },
-      // Terminal Core — mono, dark, IDE
-      { name: 'Warp',       family: 'Terminal Core',         accent: '#00ff95' },
-      { name: 'Raycast',    family: 'Terminal Core',         accent: '#ff6363' },
-      { name: 'Ollama',     family: 'Terminal Core',         accent: '#d4ff00' },
-      { name: 'GitHub',     family: 'Terminal Core',         accent: '#6366f1' },
-      // Data-Dense Pro — charts, low chrome
-      { name: 'ClickHouse', family: 'Data-Dense Pro',        accent: '#ffcc01' },
-      { name: 'PostHog',    family: 'Data-Dense Pro',        accent: '#1d4aff' },
-      { name: 'Grafana',    family: 'Data-Dense Pro',        accent: '#f46800' },
-      { name: 'Datadog',    family: 'Data-Dense Pro',        accent: '#632ca6' },
-      // Cinematic Dark — black canvas, hero
-      { name: 'NVIDIA',     family: 'Cinematic Dark',        accent: '#76b900' },
-      { name: 'RunwayML',   family: 'Cinematic Dark',        accent: '#ff5e3a' },
-      { name: 'ElevenLabs', family: 'Cinematic Dark',        accent: '#ffd166' },
-      { name: 'SpaceX',     family: 'Cinematic Dark',        accent: '#ffffff' },
-      // Playful Color — saturated, motion
-      { name: 'Figma',      family: 'Playful Color',         accent: '#0acf83' },
-      { name: 'Duolingo',   family: 'Playful Color',         accent: '#58cc02' },
-      { name: 'Toss',       family: 'Playful Color',         accent: '#3182f6' },
-      { name: 'Spotify',    family: 'Playful Color',         accent: '#1ed760' },
+      // Editorial Minimal
+      { name: 'Linear', family: 'Editorial Minimal', accent: '#5e6ad2',
+        heading: 'Inter Display', body: 'Inter',
+        signature: 'Surgical density, calm purple, hairline borders, big type, generous whitespace.',
+        voice: 'Technical, terse, numbers-driven. Outcomes over adjectives.' },
+      { name: 'Stripe', family: 'Editorial Minimal', accent: '#635bff',
+        heading: 'Sohne (or Inter Display)', body: 'Sohne (or Inter)',
+        signature: 'Geometric SaaS confidence, subtle gradients on hero only, structural cards, gradient hero text.',
+        voice: 'Professional, technical, documentation-friendly. Built-for-developers.' },
+      { name: 'Vercel', family: 'Editorial Minimal', accent: '#000000',
+        heading: 'Geist', body: 'Geist',
+        signature: 'Pure monochrome, geometric sans, deploy-energy speed, single accent on CTA only.',
+        voice: 'Developer-first, performant, fast. Ship-mode tone.' },
+      { name: 'Notion', family: 'Editorial Minimal', accent: '#0070f3',
+        heading: 'Inter', body: 'Inter',
+        signature: 'Friendly editorial, blue accents, generous spacing, clean cards with soft borders.',
+        voice: 'Approachable, capable, organized. Productivity without intimidation.' },
+
+      // Warm Editorial
+      { name: 'Claude', family: 'Warm Editorial', accent: '#cc785c',
+        heading: 'Tiempos (or Crimson Pro)', body: 'Inter',
+        signature: 'Terracotta + cream, serif headlines, warm photography, generous whitespace, considered.',
+        voice: 'Articulate, thoughtful, warm. Curious without showing off.' },
+      { name: 'Substack', family: 'Warm Editorial', accent: '#ff6719',
+        heading: 'Editorial New (or Playfair Display)', body: 'Inter',
+        signature: 'Newsletter classic, orange punch, serif headlines, paragraph-first reading.',
+        voice: 'Writerly, opinionated, intimate. Personal essay register.' },
+      { name: 'Medium', family: 'Warm Editorial', accent: '#1a8917',
+        heading: 'Lora', body: 'Charter (or Source Serif)',
+        signature: 'Reading-mode green, classic serif, paragraph-first, clean text-only hierarchy.',
+        voice: 'Long-form, essayistic, reflective. Slow takes.' },
+      { name: 'Resend', family: 'Warm Editorial', accent: '#000000',
+        heading: 'Geist', body: 'Inter',
+        signature: 'Cream + black indie editorial, serif headlines, dev-friendly with warmth.',
+        voice: 'Indie-hacker, technical-but-warm, ship-fast.' },
+
+      // Terminal Core
+      { name: 'Warp', family: 'Terminal Core', accent: '#00ff95',
+        heading: 'JetBrains Mono', body: 'Inter',
+        signature: 'AI terminal future, mint accent on dark, mono throughout, command-line aesthetic.',
+        voice: 'Power-user, command-line native, futuristic but grounded.' },
+      { name: 'Raycast', family: 'Terminal Core', accent: '#ff6363',
+        heading: 'JetBrains Mono', body: 'Inter',
+        signature: 'Spotlight power-user, red accent on dark, productivity utility, key-shortcut grids.',
+        voice: 'Keyboard-first, fast, opinionated about workflow.' },
+      { name: 'Ollama', family: 'Terminal Core', accent: '#d4ff00',
+        heading: 'JetBrains Mono', body: 'JetBrains Mono',
+        signature: 'Local LLM hacker, bright lime on dark, terminal-pure aesthetic, llama mascot.',
+        voice: 'Open-source, hacker-friendly, technical-honest.' },
+      { name: 'GitHub', family: 'Terminal Core', accent: '#6366f1',
+        heading: 'Mona Sans (or Inter)', body: 'Inter',
+        signature: 'Octocat developer hub, deep navy with violet, code-first cards, file-tree aesthetic.',
+        voice: 'Developer, collaborative, version-controlled mindset.' },
+
+      // Data-Dense Pro
+      { name: 'ClickHouse', family: 'Data-Dense Pro', accent: '#ffcc01',
+        heading: 'IBM Plex Sans', body: 'IBM Plex Sans',
+        signature: 'Yellow-on-black analytics, dense charts, mono labels, performance-first composition.',
+        voice: 'Performance-obsessed, scale-first, technical. Benchmarks in body copy.' },
+      { name: 'PostHog', family: 'Data-Dense Pro', accent: '#1d4aff',
+        heading: 'Mona Sans (or IBM Plex Sans)', body: 'IBM Plex Sans',
+        signature: 'Product analytics blue, friendly density, real-time chart aesthetic, hand-drawn touches.',
+        voice: 'Product-builder, data-driven, transparent. Open-source ethos.' },
+      { name: 'Grafana', family: 'Data-Dense Pro', accent: '#f46800',
+        heading: 'Inter', body: 'Inter',
+        signature: 'Orange dashboards, dark + colorful charts, ops-first density, alerting energy.',
+        voice: 'Observability, monitoring, DevOps-fluent. Always-on tone.' },
+      { name: 'Datadog', family: 'Data-Dense Pro', accent: '#632ca6',
+        heading: 'Inter', body: 'Inter',
+        signature: 'Purple monitoring, dense charts, alerting-energy, enterprise ops aesthetic.',
+        voice: 'Enterprise ops, monitoring-fluent, scale-first.' },
+
+      // Cinematic Dark
+      { name: 'NVIDIA', family: 'Cinematic Dark', accent: '#76b900',
+        heading: 'NVIDIA Sans (or Geist)', body: 'Inter',
+        signature: 'GPU green on void, geometric sans, generative-cinema photography, hero scale.',
+        voice: 'AI/compute pioneer, technical authority, future-now positioning.' },
+      { name: 'RunwayML', family: 'Cinematic Dark', accent: '#ff5e3a',
+        heading: 'PP Mori (or Space Grotesk)', body: 'Inter',
+        signature: 'Orange on black, generative-video stills, creator-first heros, fluid type.',
+        voice: 'Creative AI, generative-native, indie-pro. Filmmaker register.' },
+      { name: 'ElevenLabs', family: 'Cinematic Dark', accent: '#ffd166',
+        heading: 'Geist', body: 'Inter',
+        signature: 'Audio amber on black, voice-first product UI, waveform aesthetic.',
+        voice: 'Voice/audio AI, polished, frontier. Studio-quality framing.' },
+      { name: 'SpaceX', family: 'Cinematic Dark', accent: '#ffffff',
+        heading: 'D-DIN (or Geist)', body: 'Inter',
+        signature: 'Mission black + white, technical photography, aerospace-grade typography, telemetry.',
+        voice: 'Mission-driven, technical achievement, mythic. Engineering-first.' },
+
+      // Playful Color
+      { name: 'Figma', family: 'Playful Color', accent: '#0acf83',
+        heading: 'Whyte (or Inter Display)', body: 'Inter',
+        signature: 'Joyful design tools, multi-color brand (red/green/blue/purple), playful but precise.',
+        voice: 'Designer-friendly, collaborative, joy. Tool-of-tools confidence.' },
+      { name: 'Duolingo', family: 'Playful Color', accent: '#58cc02',
+        heading: 'Feather Bold (or Outfit)', body: 'Nunito',
+        signature: 'Owl-friendly green, playful illustration, gamified UI, rounded everything.',
+        voice: 'Gamified learning, encouraging, friendly. Streak-energy.' },
+      { name: 'Toss', family: 'Playful Color', accent: '#3182f6',
+        heading: 'Pretendard (or Outfit)', body: 'Pretendard',
+        signature: 'Korean fintech sparkle, blue + sparkle particles, mobile-first cards.',
+        voice: 'Fintech-fresh, approachable, modern. Banking-without-the-bank.' },
+      { name: 'Spotify', family: 'Playful Color', accent: '#1ed760',
+        heading: 'Spotify Circular (or Outfit)', body: 'Inter',
+        signature: 'Music-green on black, neon-vibrant, audio-driven hero artwork, full-bleed imagery.',
+        voice: 'Music/audio, energetic, cultural. Playlist-curator confidence.' },
+
       // Glass / Soft-Futurism
-      { name: 'Apple',      family: 'Glass / Soft-Futurism', accent: '#0066cc' },
-      { name: 'Arc',        family: 'Glass / Soft-Futurism', accent: '#fa6f10' },
-      { name: 'Airbnb',     family: 'Glass / Soft-Futurism', accent: '#ff5a5f' },
-      { name: 'Tesla',      family: 'Glass / Soft-Futurism', accent: '#cc0000' },
-      // Neon Brutalist — loud
-      { name: 'Nike',       family: 'Neon Brutalist',        accent: '#ff5e1f' },
-      { name: 'Pitchfork',  family: 'Neon Brutalist',        accent: '#ff0048' },
-      { name: 'The Verge',  family: 'Neon Brutalist',        accent: '#5200ff' },
-      { name: 'PlayStation',family: 'Neon Brutalist',        accent: '#003791' },
-      // Cult / Indie — quiet weirdness
-      { name: 'A24',        family: 'Cult / Indie',          accent: '#000000' },
-      { name: 'Criterion',  family: 'Cult / Indie',          accent: '#c41e3a' },
-      { name: 'Obsidian',   family: 'Cult / Indie',          accent: '#483699' },
-      { name: 'Are.na',     family: 'Cult / Indie',          accent: '#272727' }
+      { name: 'Apple', family: 'Glass / Soft-Futurism', accent: '#0066cc',
+        heading: 'SF Pro Display', body: 'SF Pro',
+        signature: 'Premium frost depth, SF Pro everywhere, photography-led hero, soft glassmorphism.',
+        voice: 'Refined, premium, experiential. Confident understatement.' },
+      { name: 'Arc', family: 'Glass / Soft-Futurism', accent: '#fa6f10',
+        heading: 'Inter', body: 'Inter',
+        signature: 'Browser reimagined, orange + glass effects, productivity-zen, soft gradients.',
+        voice: 'Productivity-modern, opinionated, calm-but-fast.' },
+      { name: 'Airbnb', family: 'Glass / Soft-Futurism', accent: '#ff5a5f',
+        heading: 'Cereal (or DM Sans)', body: 'Inter',
+        signature: 'Coral hospitality, photography-driven hero, soft spaces, rounded everything.',
+        voice: 'Belonging, hospitality, soft-luxurious. Travel-friend tone.' },
+      { name: 'Tesla', family: 'Glass / Soft-Futurism', accent: '#cc0000',
+        heading: 'Gotham (or Montserrat)', body: 'Inter',
+        signature: 'Premium velocity, red + black + chrome, automotive-futurism photography.',
+        voice: 'Mission-driven, premium, technical. First-principles confidence.' },
+
+      // Neon Brutalist
+      { name: 'Nike', family: 'Neon Brutalist', accent: '#ff5e1f',
+        heading: 'Trade Gothic (or Bowlby One)', body: 'Inter',
+        signature: 'Athletic confident, orange + black, bold display type, photography-driven, swoosh-energy.',
+        voice: 'Confident, athletic, "just do it" directness. Champion register.' },
+      { name: 'Pitchfork', family: 'Neon Brutalist', accent: '#ff0048',
+        heading: 'Times New Roman (or Playfair Display)', body: 'Inter',
+        signature: 'Music criticism heat, hot pink + black, editorial loud, score-driven.',
+        voice: 'Critical, opinionated, music-fluent. Album-review register.' },
+      { name: 'The Verge', family: 'Neon Brutalist', accent: '#5200ff',
+        heading: 'Inter (or Bowlby One)', body: 'Inter',
+        signature: 'Tech tabloid violet, electric blue + bold type, news-loud, vertical hero composition.',
+        voice: 'Tech criticism, opinionated, fast. Newsroom-pace.' },
+      { name: 'PlayStation', family: 'Neon Brutalist', accent: '#003791',
+        heading: 'SST (or Inter Display)', body: 'Inter',
+        signature: 'Console deep blue, gaming graphics, generation icons, premium controller aesthetic.',
+        voice: 'Gaming culture, premium console, generational. Player-pride tone.' },
+
+      // Cult / Indie
+      { name: 'A24', family: 'Cult / Indie', accent: '#000000',
+        heading: 'Caslon (or Playfair Display)', body: 'Inter',
+        signature: 'Quiet film weirdness, neutral cream + black, classical serif, occasional hand-drawn.',
+        voice: 'Cinephile, indie, thoughtful, quietly weird. Festival-film register.' },
+      { name: 'Criterion', family: 'Cult / Indie', accent: '#c41e3a',
+        heading: 'Caslon (or Playfair Display)', body: 'Inter',
+        signature: 'Cinephile curation, deep red + cream, classic film aesthetic, archival numbering.',
+        voice: 'Curatorial, classical, reverent. Catalog-essay register.' },
+      { name: 'Obsidian', family: 'Cult / Indie', accent: '#483699',
+        heading: 'Inter', body: 'Inter',
+        signature: 'Personal knowledge management, deep purple, markdown-native, link-graph aesthetic.',
+        voice: 'PKM enthusiast, second-brain, methodical. Link-everything mindset.' },
+      { name: 'Are.na', family: 'Cult / Indie', accent: '#272727',
+        heading: 'Mercury (or Lora)', body: 'Inter',
+        signature: 'Slow social research, near-black + cream, distinctive serif, archival blocks.',
+        voice: 'Curatorial, considered, archival. Mood-board-as-research register.' }
     ];
+
+    let selectedBrand = null;
 
     function renderBrandPresets() {
       const grid = document.getElementById('brand-presets-grid');
@@ -1470,15 +1615,16 @@ Two questions:
     document.getElementById('brand-presets-grid').addEventListener('click', (e) => {
       const btn = e.target.closest('.brand-preset');
       if (!btn) return;
-      const family = btn.dataset.family;
-      const accent = btn.dataset.accent;
+      const name = btn.querySelector('.brand-preset-name').textContent;
+      // Find the full preset object so we can keep its DNA for the prompt
+      selectedBrand = BRAND_PRESETS.find(p => p.name === name) || null;
       // Apply family to dropdown
       const familyEl = document.getElementById('family');
-      familyEl.value = family;
+      familyEl.value = btn.dataset.family;
       familyEl.dispatchEvent(new Event('change', { bubbles: true }));
       // Apply accent to input
       const accentEl = document.getElementById('accent');
-      accentEl.value = accent;
+      accentEl.value = btn.dataset.accent;
       accentEl.dispatchEvent(new Event('input', { bubbles: true }));
       // Mark this preset as selected
       document.querySelectorAll('.brand-preset.selected').forEach(b => b.classList.remove('selected'));
@@ -1486,7 +1632,17 @@ Two questions:
       // Save and update preview
       save();
       updatePreview();
-      showStatus(btn.querySelector('.brand-preset-name').textContent + ' applied');
+      showStatus(name + ' applied — full brand DNA will be in your prompt');
+    });
+
+    // If user manually changes family or accent, deselect any picked brand
+    // (because they've now diverged from any of the preset DNAs)
+    document.getElementById('family').addEventListener('change', (e) => {
+      if (selectedBrand && e.isTrusted) {
+        // user-initiated change — clear brand selection
+        selectedBrand = null;
+        document.querySelectorAll('.brand-preset.selected').forEach(b => b.classList.remove('selected'));
+      }
     });
 
     /* ============ Copy-prompt buttons (step walkthrough) ============ */
